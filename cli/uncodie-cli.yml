@@ -1,0 +1,38 @@
+generated: '2026-07-21'
+method: searched
+source: https://github.com/makinary/cli
+name: Makinari Installer (CLI)
+description: >-
+  First-party "one-liner" installer CLI that deploys the complete Makinari
+  ecosystem locally: the Market Fit frontend (Next.js), the API backend
+  (Next.js API routes), the Workflows process engine (Temporal + Node.js),
+  and optional local Supabase (Docker) and Temporal servers. It handles
+  dependency installation, repository cloning, cross-service .env
+  configuration, credential injection, and generates a start-dev.sh script
+  to launch the whole stack.
+repository: https://github.com/makinary/cli
+language: Shell
+install:
+  - method: git
+    commands:
+      - git clone https://github.com/makinary/cli.git
+      - cd cli
+      - ./install.sh
+prerequisites:
+  - Git
+  - Node.js v18+
+  - Docker Desktop (required for local DB)
+commands:
+  - command: ./install.sh
+    description: Interactive wizard that sets up the full local Makinari stack.
+  - command: ./start-dev.sh
+    description: Generated script that launches the entire stack with one command.
+resulting_components:
+  - market-fit/ (frontend repo)
+  - API/ (backend repo)
+  - Workflows/ (process engine repo)
+  - makinari-db-scheme/ (DB schema and migrations, local DB only)
+notes: >-
+  This is a deployment/bootstrap CLI rather than an API client CLI; no
+  registry-published client packages (npm/PyPI/etc.) were found for Makinari
+  or Uncodie as of 2026-07-21.

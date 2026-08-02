@@ -1,0 +1,31 @@
+generated: '2026-07-21'
+method: searched
+source: https://docs.makinari.com/rest-api
+format: json-message
+envelope:
+  description: >-
+    All responses are JSON. Error responses include a "message" field with a
+    human-readable description of the problem. The API does not document
+    RFC 9457 application/problem+json.
+  error_field: message
+problems:
+  - status: 400
+    title: Bad request
+    detail: Bad request, check your parameters.
+  - status: 401
+    title: Unauthorized
+    detail: Unauthorized, invalid or missing API key.
+  - status: 404
+    title: Resource not found
+    detail: Resource not found.
+  - status: 429
+    title: Rate limit exceeded
+    detail: Rate limit exceeded.
+  - status: 500
+    title: Server error
+    detail: Server error.
+success_codes:
+  - status: 200
+    title: Success
+  - status: 201
+    title: Resource created

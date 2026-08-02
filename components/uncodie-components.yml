@@ -1,0 +1,36 @@
+generated: '2026-07-21'
+method: searched
+source: https://docs.makinari.com/channels/website/setup-chat-widget
+notes: >-
+  Makinari ships a client-side embeddable surface under the MarketFit
+  JavaScript global: a website chat widget and a visitor-tracking snippet,
+  configured per site and wired to the Visitors/Chat APIs. Distinct from
+  server-side SDKs (none are published to registries).
+families:
+  - family: Chat Widget
+    loader: window.MarketFit
+    init: window.MarketFit.init(config)
+    docs: https://docs.makinari.com/channels/website/setup-chat-widget
+    description: >-
+      Real-time website chat widget with contextual conversations, agent
+      hand-off and automation. Config: siteId (required), apiEndpoint
+      (required), chatHidden, and a chat object (enabled, agentName,
+      welcomeMessage, title, position bottom-right|bottom-left, theme colors,
+      accentColor, allowAnonymousMessages).
+    subpages:
+      - https://docs.makinari.com/channels/website/setup-chat-widget/properties
+      - https://docs.makinari.com/channels/website/setup-chat-widget/functions
+      - https://docs.makinari.com/channels/website/setup-chat-widget/control
+      - https://docs.makinari.com/channels/website/setup-chat-widget/management
+      - https://docs.makinari.com/channels/website/setup-chat-widget/advanced
+      - https://docs.makinari.com/channels/website/setup-chat-widget/use-cases
+      - https://docs.makinari.com/channels/website/setup-chat-widget/quick-reference
+      - https://docs.makinari.com/channels/website/setup-chat-widget/troubleshooting
+  - family: Visitor Tracking
+    loader: window.MarketFit
+    docs: https://docs.makinari.com/channels/website/setup-tracking
+    description: >-
+      Website tracking snippet that monitors visitor interactions and feeds
+      the Visitors API (identification, sessions, segments, analytics).
+    subpages:
+      - https://docs.makinari.com/channels/website/setup-tracking/methods

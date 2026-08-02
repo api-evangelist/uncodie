@@ -1,25 +1,153 @@
 aid: uncodie
-name: Uncodie
-description: Uncodie is a company surfaced as a portfolio company of 500-global and added to the API Evangelist
-  network as a stub for enrichment. This profile is a lead awaiting the enrichment pipeline.
+name: Uncodie (now Makinari)
+description: >-
+  Uncodie, a 500 Global portfolio company, rebranded as Makinari — an AI-agent
+  business platform that builds the application a business needs and then runs
+  growth on top of it with a team of AI agents (CMO, sales, growth, copywriter,
+  customer support, data analyst, email, WhatsApp, UX) plus a CRM. Developers
+  get a versioned REST API (Visitors, Finder, Robots, Instances, Requirements,
+  Secure Tokens), a Content API for headless delivery, Temporal-backed
+  workflow automation, webhooks, an embeddable chat widget, and an official
+  hosted MCP server exposing 40+ tools. www.uncodie.com now redirects to
+  www.makinari.com.
 url: https://raw.githubusercontent.com/api-evangelist/uncodie/refs/heads/main/apis.yml
+accessModel:
+  pricing: unknown
+  onboarding: self-serve
+  trial: false
+  try_now: false
+  public: false
+  label: Self-serve signup
+  confidence: medium
+  source:
+  - authentication
+  generated: '2026-07-22'
+  method: derived
+image: https://www.makinari.com/images/logo.png
 x-type: company
 x-source: vc-portfolio
 x-backed-by:
 - 500-global
 x-tier: stub
 x-tier-reason: portfolio-lead
+x-enrichment:
+  date: '2026-07-21'
+  status: enriched
+  artifacts_added: 13
+  pass: local-v1
 specificationVersion: '0.20'
 created: '2026-07-17'
-modified: '2026-07-17'
+modified: '2026-07-21'
 tags:
 - Company
-apis: []
+- Artificial Intelligence
+- AI Agents
+- CRM
+- Sales Automation
+- Marketing Automation
+- Lead Generation
+- No Code
+- MCP
+apis:
+- name: Makinari REST API
+  description: >-
+    Core Makinari platform API covering Visitors (tracking and
+    identification), Finder (contact and company search), Robots
+    (browser-automation instances), Instances, Requirements, and Secure
+    Tokens. API-key Bearer authentication; all endpoints versioned under v1.
+    The docs quote https://api.makinari.io/v1 as the base URL, but that host
+    does not currently resolve; the live application host serving /api/*
+    routes is backend.makinari.com.
+  humanURL: https://docs.makinari.com/rest-api
+  baseURL: https://backend.makinari.com/api
+  tags:
+  - REST
+  - Visitors
+  - Leads
+  - Automation
+  properties:
+  - type: Documentation
+    url: https://docs.makinari.com/rest-api
+  - type: APIReference
+    url: https://docs.makinari.com/rest-api
+- name: Makinari Content API
+  description: >-
+    Public content delivery API for Makinari sites — fetch published blog
+    posts, RSS feeds, and other content types for headless frontends,
+    directories, and syndication. Browser requests from the registered site
+    domain need no key; server-to-server requests require an API key.
+  humanURL: https://docs.makinari.com/content-api
+  baseURL: https://backend.makinari.com/api
+  tags:
+  - Content
+  - CMS
+  - RSS
+  properties:
+  - type: Documentation
+    url: https://docs.makinari.com/content-api
 maintainers:
 - FN: Kin Lane
   email: kin@apievangelist.com
 - FN: APIs.json
   email: info@apis.io
 common:
+- type: DomainSecurity
+  url: security/uncodie-domain-security.yml
 - type: Website
-  url: https://uncodie.com
+  url: https://www.makinari.com
+- type: Website
+  name: Legacy Uncodie website (redirects to makinari.com)
+  url: https://www.uncodie.com
+- type: DeveloperPortal
+  url: https://docs.makinari.com
+- type: Documentation
+  url: https://docs.makinari.com
+- type: APIReference
+  url: https://docs.makinari.com/rest-api
+- type: GettingStarted
+  url: https://docs.makinari.com/first-steps
+- type: Support
+  url: https://www.makinari.com/product/support
+- type: Blog
+  url: https://www.makinari.com/blog
+- type: Pricing
+  url: https://www.makinari.com/product/pricing
+- type: SignUp
+  url: https://app.makinari.com/auth?mode=register
+- type: Login
+  url: https://app.makinari.com/auth
+- type: TermsOfService
+  url: https://www.makinari.com/terms
+- type: PrivacyPolicy
+  url: https://www.makinari.com/privacy
+- type: GitHubOrganization
+  url: https://github.com/makinary
+- type: StatusPage
+  url: https://docs.makinari.com/status
+- type: ChangeLog
+  url: https://www.makinari.com/product/changelog
+- type: ChangeLog
+  name: Changelog artifact (recent entries, structured)
+  url: changelog/uncodie-changelog.yml
+- type: MCPServer
+  url: mcp/uncodie-mcp.yml
+- type: LLMsTxt
+  url: llms/uncodie-llms.txt
+- type: Authentication
+  url: authentication/uncodie-authentication.yml
+- type: ErrorCatalog
+  url: errors/uncodie-problem-types.yml
+- type: Lifecycle
+  url: lifecycle/uncodie-lifecycle.yml
+- type: Conventions
+  url: conventions/uncodie-conventions.yml
+- type: Webhooks
+  url: asyncapi/uncodie-webhooks.yml
+- type: CLI
+  url: cli/uncodie-cli.yml
+- type: Components
+  url: components/uncodie-components.yml
+- type: WellKnown
+  url: well-known/uncodie-well-known.yml
+- type: Conformance
+  url: conformance/uncodie-conformance.yml

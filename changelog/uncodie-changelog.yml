@@ -1,0 +1,44 @@
+generated: '2026-07-21'
+method: searched
+source: https://www.makinari.com/product/changelog
+scheme: monthly
+current_version: null
+notes: >-
+  Makinari publishes a public monthly changelog ("New updates and improvements
+  to Makinari"). Entries are month-dated rather than semver. Recent window
+  captured 2026-07-21.
+entries:
+  - date: '2026-03'
+    title: Product Agents & UI Improvements
+    breaking: false
+    highlights:
+      - Added new Product Agents page for better AI agent management
+      - Fixed icon exports and imports in use cases data for visual consistency
+  - date: '2026-02'
+    title: Safari Compatibility & Social Media Integration
+    breaking: false
+    highlights:
+      - Improved Safari compatibility and UI consistency across chat components
+      - Added content asset management features (fetch, attach, detach assets)
+      - Enhanced social media integration with active status inference
+      - Enhanced chat message rendering with remark-gfm support
+      - Refactored SimpleMessagesView to enhance step management
+      - Implemented lead qualification activity with error handling
+  - date: '2026-01'
+    title: Social Networks Addon & UX Consolidation
+    breaking: false
+    highlights:
+      - Launched v0 Social Networks addon
+      - 'Added support for new lead statuses: cold and not-qualified'
+      - Added command review on all chat messages
+      - Improved pending conversations filtering and prioritization
+      - Fixed lead updating and added better visual feedback
+  - date: '2025-12'
+    title: Next.js Upgrade & Agent Mail
+    breaking: false
+    highlights:
+      - Updated to Next.js 16 and React 19
+      - Introduced new Agent Mail UX
+      - Removed requirements for signup
+      - Added v0 for message confirmation
+      - Improved settings and context UX

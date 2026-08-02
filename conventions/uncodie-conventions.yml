@@ -1,0 +1,44 @@
+generated: '2026-07-21'
+method: searched
+source: https://docs.makinari.com/rest-api
+authentication:
+  style: api-key-bearer
+  header: 'Authorization: Bearer YOUR_API_KEY'
+  alternate: 'x-api-key header (Secure Tokens API only)'
+  artifact: authentication/uncodie-authentication.yml
+idempotency:
+  supported: false
+  notes: No idempotency-key mechanism is documented.
+pagination:
+  style: offset
+  request_params: [limit, offset]
+  defaults: { limit: 50, offset: 0 }
+  notes: >-
+    Documented on Instances endpoints (GET /api/instances, /api/instances/[id]/logs,
+    /api/instances/[id]/plans) as limit/offset query parameters.
+  source: https://docs.makinari.com/rest-api/instances
+field_expansion:
+  supported: false
+  notes: No expand/sparse-fieldset mechanism documented.
+metadata:
+  supported: true
+  notes: API keys accept an optional metadata object at creation.
+  source: https://docs.makinari.com/first-steps/api-keys
+request_tracing:
+  supported: false
+  notes: No request-id header documented.
+versioning:
+  scheme: uri-path
+  current: v1
+  artifact: lifecycle/uncodie-lifecycle.yml
+error_envelope:
+  shape: '{ "message": "<human readable description>" }'
+  artifact: errors/uncodie-problem-types.yml
+rate_limits:
+  signaling: status-code
+  status: 429
+  headers: []
+  notes: 429 "Rate limit exceeded" is documented; no rate-limit response headers are documented.
+webhooks:
+  supported: true
+  artifact: asyncapi/uncodie-webhooks.yml

@@ -1,0 +1,122 @@
+generated: '2026-07-21'
+method: searched
+source: https://docs.makinari.com/mcp-server
+status: published
+notes: >-
+  Uncodie rebranded as Makinari (www.uncodie.com redirects to www.makinari.com).
+  Makinari publishes an official hosted MCP server plus a local install path
+  (the API repo github.com/Makinari/API is private; the docs describe both modes).
+  Remote endpoint verified documented at docs.makinari.com/mcp-server/setup/remote.
+server:
+  name: makinari
+  transport: http
+  url: https://backend.makinari.com/api/mcp
+  authentication: API key (Bearer)
+  docs: https://docs.makinari.com/mcp-server
+  setup:
+    remote: https://docs.makinari.com/mcp-server/setup/remote
+    local: https://docs.makinari.com/mcp-server/setup/local
+  local:
+    repository: https://github.com/Makinari/API
+    run: npm run mcp        # stdio mode
+    http_endpoint: POST /api/mcp   # JSON-RPC over HTTP
+    environment:
+      - MCP_SITE_ID (required)
+      - MCP_USER_ID (optional)
+      - MCP_INSTANCE_ID (optional, default 'default')
+      - API_URL (optional, default http://localhost:3000)
+      - REST_API_KEY (required for remote API)
+      - SERVICE_API_KEY (required when running the API locally)
+tools:
+  - name: generateImage
+    description: Generate images using AI.
+  - name: generateVideo
+    description: Generate videos using AI.
+  - name: generateAudio
+    description: Generate audio using AI (Text-to-Speech).
+  - name: instance
+    description: Manage AI assistant instances (create, read, update).
+  - name: updateSiteSettings
+    description: Update site configuration.
+  - name: webSearch
+    description: Perform web searches.
+  - name: memories
+    description: Manage memories and context.
+  - name: tasks
+    description: Manage tasks and to-do lists.
+  - name: createProject
+    description: Create a new project (site).
+  - name: requirements
+    description: Manage project requirements.
+  - name: requirementStatus
+    description: Log progress and update statuses on a client requirement.
+  - name: leads
+    description: Manage leads and contacts.
+  - name: content
+    description: Manage content and articles.
+  - name: sendEmail
+    description: Send emails.
+  - name: configureEmail
+    description: Configure email settings.
+  - name: configureWhatsApp
+    description: Configure WhatsApp settings.
+  - name: createSecret
+    description: Store a secret securely in the Vault.
+  - name: salesOrder
+    description: Manage sales orders.
+  - name: sales
+    description: Sales-related tools.
+  - name: scheduling
+    description: Schedule appointments and events.
+  - name: getFinderCategoryIds
+    description: Get IDs for finder categories.
+  - name: analyzeICPTotalCount
+    description: Analyze total count for ICP.
+  - name: createIcpMining
+    description: Create ICP mining tasks.
+  - name: searchRegionVenues
+    description: Search for venues in a region.
+  - name: webhooks
+    description: Manage webhooks (list, create with url + events).
+  - name: urlToMarkdown
+    description: Convert URL content to Markdown.
+  - name: urlToSitemap
+    description: Generate sitemap from URL.
+  - name: segments
+    description: Manage customer segments.
+  - name: campaigns
+    description: Manage marketing campaigns.
+  - name: assets
+    description: Manage digital assets.
+  - name: instancePlan
+    description: Manage instance plans.
+  - name: instanceLogs
+    description: Instance log access (documented tool page).
+  - name: workflows
+    description: Manage workflows.
+  - name: copywriting
+    description: Copywriting tools.
+  - name: sendWhatsApp
+    description: Send WhatsApp messages.
+  - name: whatsappTemplate
+    description: Manage WhatsApp templates.
+  - name: conversations
+    description: Manage conversations.
+  - name: messages
+    description: Manage messages.
+  - name: report
+    description: Generate reports.
+  - name: audience
+    description: Build and manage reusable lead audiences for bulk messaging or analysis.
+  - name: sendBulkMessages
+    description: Send a message to all leads in an audience via WhatsApp or email.
+  - name: publish
+    description: Consolidated tool to create content, publish to social media, and send to an audience.
+  - name: audioToText
+    description: Transcribe audio to text (documented tool page).
+  - name: extractFrames
+    description: Extract frames from video (documented tool page).
+  - name: systemNotification
+    description: System notifications (documented tool page).
+  - name: deals
+    description: Manage deals (documented tool page).

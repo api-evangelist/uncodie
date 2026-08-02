@@ -1,0 +1,33 @@
+generated: '2026-07-21'
+method: searched
+source: https://docs.makinari.com/rest-api
+versioning:
+  scheme: uri-path
+  current: v1
+  docs: https://docs.makinari.com/rest-api
+  notes: >-
+    All endpoints are versioned; the current stable version is v1. The docs
+    quote the base URL as https://api.makinari.io/v1 (Requirements pages use
+    https://api.makinari.com/v1), but as of 2026-07-21 neither api.makinari.io
+    nor api.makinari.com resolves in DNS; the live application host serving
+    /api/* routes (including the hosted MCP server) is
+    https://backend.makinari.com.
+deprecation:
+  policy_url: null
+  sunset_header: false
+  notes: No published deprecation policy or RFC 8594 Sunset-header support found.
+status_page:
+  url: https://docs.makinari.com/status
+  json_api: https://docs.makinari.com/api/status
+  systems_api: https://docs.makinari.com/api/status/systems
+  notes: >-
+    Live status page reporting per-system health (AI services, databases,
+    Public API, Agents API, Workflow API, Visitors/Finder/Robots APIs, cron
+    jobs, notifications) with 24h/7d/30d SLA uptime and 90-day history,
+    refreshed by an hourly cron. Verified live 2026-07-21 (overall status
+    "down", 24h SLA 66.7% at time of probe).
+sla:
+  url: https://docs.makinari.com/status
+  uptime_target: null
+  notes: SLA figures are reported per system on the status page; no contractual uptime target published.
+deprecated_operations: []

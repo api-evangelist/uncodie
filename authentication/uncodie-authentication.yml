@@ -1,0 +1,51 @@
+generated: '2026-07-21'
+method: searched
+source: https://docs.makinari.com/rest-api
+docs: https://docs.makinari.com/first-steps/api-keys
+summary:
+  types: [apiKey]
+  api_key_in: [header]
+  oauth2_flows: []
+notes: >-
+  Makinari (formerly Uncodie) uses API-key authentication across its REST API,
+  Workflows API, Content API, and MCP server. Keys are passed as a Bearer token
+  in the Authorization header; the Secure Tokens API instead uses an x-api-key
+  header. No OAuth 2.0 or OpenID Connect authorization surface is documented.
+schemes:
+  - name: bearerApiKey
+    type: apiKey
+    in: header
+    parameter: Authorization
+    scheme: 'Bearer YOUR_API_KEY'
+    description: >-
+      All REST API, Workflows, and MCP requests require an API key passed as a
+      Bearer token in the Authorization header.
+    sources:
+      - https://docs.makinari.com/rest-api
+      - https://docs.makinari.com/workflows
+      - https://docs.makinari.com/mcp-server/setup/remote
+  - name: xApiKey
+    type: apiKey
+    in: header
+    parameter: x-api-key
+    description: >-
+      Secure Tokens API endpoints (server-to-server secret decryption) require
+      an API Key or Service Key via the x-api-key header.
+    sources:
+      - https://docs.makinari.com/rest-api/secure-tokens
+key_management:
+  create: POST /api/keys
+  list: GET /api/keys?site_id=...&user_id=...
+  revoke: DELETE /api/keys?id=...&site_id=...&user_id=...
+  scopes: [read, write]
+  expiration_days_default: 90
+  docs: https://docs.makinari.com/first-steps/api-keys
+  notes: >-
+    Keys are scoped to a site and user, support optional prefix and metadata,
+    and are displayed in full only once at creation.
+content_api_exception:
+  description: >-
+    Content API requests from browsers succeed without an API key only when the
+    Origin header matches the domain registered for the site; server-to-server
+    requests always require a key.
+  source: https://docs.makinari.com/content-api

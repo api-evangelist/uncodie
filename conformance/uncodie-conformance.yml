@@ -1,0 +1,32 @@
+generated: '2026-07-21'
+method: searched
+source: https://docs.makinari.com/rest-api
+notes: >-
+  Asserted from the published REST API documentation (no OpenAPI document is
+  published; the API repo github.com/Makinari/API is private). No published
+  compliance program or certifications (SOC 2 / ISO 27001 / etc.) were found.
+standards:
+  - id: oauth2
+    conforms: false
+    evidence: Authentication is API-key Bearer only; no OAuth 2.0 flows documented.
+  - id: oidc
+    conforms: false
+    evidence: No OpenID Connect discovery documents on any host (all /.well-known probes 404/307).
+  - id: rfc9457-problem-details
+    conforms: false
+    evidence: Errors are plain JSON with a "message" field, not application/problem+json.
+  - id: pagination
+    conforms: true
+    evidence: limit/offset pagination documented on Instances, Logs, and Plans endpoints (defaults 50/0).
+  - id: idempotency
+    conforms: false
+    evidence: No idempotency-key mechanism documented.
+  - id: versioned-uri
+    conforms: true
+    evidence: All endpoints versioned under /v1 per the REST API docs.
+  - id: mcp
+    conforms: true
+    evidence: Official hosted Model Context Protocol server at backend.makinari.com/api/mcp (JSON-RPC over HTTP, stdio locally).
+  - id: rfc9116-security-txt
+    conforms: false
+    evidence: /.well-known/security.txt not present on any probed host.

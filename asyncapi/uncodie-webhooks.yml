@@ -1,0 +1,32 @@
+generated: '2026-07-21'
+method: searched
+source: https://docs.makinari.com/mcp-server/tools/webhooks
+type: Webhooks
+spec_type: null
+notes: >-
+  Makinari (formerly Uncodie) documents a real outbound webhook surface but
+  publishes no AsyncAPI document. Webhooks are managed via the webhooks tool
+  (MCP) or its REST endpoint; subscriptions carry a target url plus an events[]
+  array. Internally, an inbound workflow webhook receives DB change events and
+  dispatches Temporal workflows.
+management:
+  rest_endpoint: POST /api/agents/tools/webhooks
+  authentication: 'Authorization: Bearer YOUR_API_KEY'
+  actions:
+    - action: list
+      description: List all webhooks for a site (requires site_id).
+    - action: create
+      description: Register a new webhook (requires site_id, url, events[]).
+  docs: https://docs.makinari.com/mcp-server/tools/webhooks
+events_documented:
+  - lead.created
+  - conversation.started
+events_notes: >-
+  The docs show lead.created and conversation.started as example subscription
+  events; a complete event catalog is not published.
+inbound_workflow_webhook:
+  endpoint: POST /api/workflow/webhook
+  description: >-
+    Receives DB change events, finds active subscriptions by site and table,
+    and dispatches a Temporal workflow asynchronously.
+  docs: https://docs.makinari.com/workflows/webhook
