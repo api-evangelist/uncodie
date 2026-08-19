@@ -1,32 +1,118 @@
-generated: '2026-07-21'
+generated: '2026-08-13'
 method: searched
 source: https://docs.makinari.com/rest-api
 notes: >-
-  Asserted from the published REST API documentation (no OpenAPI document is
-  published; the API repo github.com/Makinari/API is private). No published
-  compliance program or certifications (SOC 2 / ISO 27001 / etc.) were found.
+  Asserted from the published documentation, the open-source API repository
+  (github.com/Uncodier/API) and live probes on 2026-08-13. Makinari publishes
+  NO OpenAPI, Swagger, GraphQL or AsyncAPI document — contract discovery was
+  re-run this round against every host (api host root, docs host, app host and
+  the API host) and every candidate path returned either a Next.js 404 HTML
+  shell or the platform's blanket 401. There is no compliance program, trust
+  center, certification page or vulnerability-disclosure policy on any surface.
+compliance_claims:
+  - claim: SOC2
+    published_certification: false
+    where: https://www.makinari.com/product/coding-agents
+    text: >-
+      "Enterprise plans include dedicated VPCs, SOC2 compliance, and dedicated
+      instances to keep your data completely isolated."
+    assessment: >-
+      A marketing sentence about what an enterprise plan includes, not a
+      certification. No SOC 2 report, audit period, auditor, trust center or
+      request process is published, and probe-security-programs found no trust
+      center on any host. Recorded as a CLAIM, not as evidence; no `Compliance`
+      pointer is emitted in apis.yml on the strength of it.
+  - claim: Enterprise SLA / guaranteed uptime
+    published_certification: false
+    where: https://www.makinari.com/resources/agents
+    text: '"Enterprise SLAs & Governance" / "Guaranteed uptime & SLA"'
+    assessment: No SLA document, uptime target or credit schedule is published.
+  - claim: 100% Open Source, AGPL-3.0
+    published_certification: false
+    where: https://makinari.org
+    assessment: >-
+      The three repositories are genuinely public and readable, but none
+      carries a LICENSE file (all 404 on 2026-08-13), all three declare
+      "private": true in package.json with no license field, and the docs site
+      footer instead reads "MIT 2026 © Makinari". Three inconsistent license
+      statements; see packages/uncodie-packages.yml.
 standards:
+  - id: openapi
+    conforms: false
+    evidence: >-
+      No OpenAPI/Swagger document published. Probed openapi.json, openapi.yaml,
+      swagger.json, /api-docs, /docs, /v1/openapi.json and
+      /api-reference/openapi.json on backend.makinari.com and
+      docs.makinari.com — all 404 (HTML shell) or 401. The API repo tree has no
+      spec file.
+  - id: graphql
+    conforms: false
+    evidence: No /graphql surface is documented or reachable.
+  - id: asyncapi
+    conforms: false
+    evidence: >-
+      Webhooks are documented but no AsyncAPI document is published; see
+      asyncapi/uncodie-webhooks.yml.
   - id: oauth2
     conforms: false
-    evidence: Authentication is API-key Bearer only; no OAuth 2.0 flows documented.
+    evidence: >-
+      Authentication is API-key only (Bearer or x-api-key). No OAuth 2.0 flows
+      documented; /.well-known/oauth-authorization-server and
+      /.well-known/oauth-protected-resource 404 on backend.makinari.com.
   - id: oidc
     conforms: false
-    evidence: No OpenID Connect discovery documents on any host (all /.well-known probes 404/307).
+    evidence: No OpenID Connect discovery document on any host (all 404/307).
   - id: rfc9457-problem-details
     conforms: false
-    evidence: Errors are plain JSON with a "message" field, not application/problem+json.
+    evidence: >-
+      Errors are plain JSON. The REST docs describe a "message" field; the live
+      platform returns {"success":false,"error":{"code":"...","message":"..."}}
+      on a 401. Neither is application/problem+json, and the two shapes differ
+      from each other.
   - id: pagination
     conforms: true
-    evidence: limit/offset pagination documented on Instances, Logs, and Plans endpoints (defaults 50/0).
+    evidence: >-
+      limit/offset pagination documented on Instances, Logs and Plans REST
+      endpoints (defaults 50/0) and repeated as limit/offset parameters across
+      the MCP tool input schemas (list actions).
   - id: idempotency
     conforms: false
-    evidence: No idempotency-key mechanism documented.
+    evidence: >-
+      No idempotency-key mechanism documented anywhere, including on the
+      write-heavy commerce tools (checkout, sales_order, purchases).
   - id: versioned-uri
-    conforms: true
-    evidence: All endpoints versioned under /v1 per the REST API docs.
+    conforms: partial
+    evidence: >-
+      REST API endpoints are versioned under /v1, but the Agents, Workflows and
+      Content APIs are documented as unversioned /api/... paths.
   - id: mcp
     conforms: true
-    evidence: Official hosted Model Context Protocol server at backend.makinari.com/api/mcp (JSON-RPC over HTTP, stdio locally).
+    evidence: >-
+      Official hosted Model Context Protocol server at
+      https://backend.makinari.com/api/mcp (JSON-RPC 2.0 over HTTP POST), plus
+      an open-source stdio server in github.com/Uncodier/API (mcp-server/,
+      @modelcontextprotocol/sdk 1.26.0). 56 tools documented with input
+      schemas. Live tools/list is API-key gated (401 anonymous).
+  - id: a2a-agent-card
+    conforms: false
+    evidence: >-
+      /.well-known/agent-card.json and /.well-known/agent.json probed on six
+      hosts on 2026-08-13; no host serves a document (404s, plus two HTML
+      SPA 200s on the legacy uncodie.com redirect which are rejected).
   - id: rfc9116-security-txt
     conforms: false
     evidence: /.well-known/security.txt not present on any probed host.
+  - id: rfc8594-sunset
+    conforms: false
+    evidence: No Sunset/Deprecation header support or deprecation policy published.
+  - id: webhooks
+    conforms: true
+    evidence: >-
+      Outbound webhook subscriptions (url + events[]) managed via the webhooks
+      tool / REST endpoint, plus an inbound workflow webhook that dispatches
+      Temporal workflows. No signature-verification scheme is documented.
+  - id: rate-limit-headers
+    conforms: false
+    evidence: >-
+      A 429 is documented but no RateLimit-*, X-RateLimit-* or Retry-After
+      headers are published; see rate-limits/uncodie-rate-limits.yml.

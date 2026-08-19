@@ -1,122 +1,2262 @@
-generated: '2026-07-21'
+generated: '2026-08-13'
 method: searched
 source: https://docs.makinari.com/mcp-server
 status: published
 notes: >-
   Uncodie rebranded as Makinari (www.uncodie.com redirects to www.makinari.com).
-  Makinari publishes an official hosted MCP server plus a local install path
-  (the API repo github.com/Makinari/API is private; the docs describe both modes).
-  Remote endpoint verified documented at docs.makinari.com/mcp-server/setup/remote.
+  Makinari operates an official HOSTED MCP server AND publishes the server's
+  source, so both deployment modes are real: an agent can POST to
+  https://backend.makinari.com/api/mcp today with an API key, or clone the
+  open-source API repo and run the stdio server locally with `npm run mcp`.
+  Round 2 (2026-08-13) corrected the local repository URL — round 1 recorded
+  github.com/Makinari/API, which 404s; the real, public repository is
+  github.com/Uncodier/API, linked from the company's open-source hub at
+  makinari.org. Round 2 also harvested the full documented tool catalogue: 56
+  tools, each with the provider-published input schema (582 parameters in
+  total), replacing the round-1 name+summary list of 46. Ten of the ten new
+  tools are a commerce expansion (quotations, quotation_items, purchases,
+  purchase_items, catalog_commerce, checkout, entitlements,
+  subscription_plan_items, reservations, reservation_schedules).
+  The live endpoint could not be introspected: an anonymous
+  {"jsonrpc":"2.0","method":"tools/list"} POST returns HTTP 401
+  {"code":"UNAUTHORIZED","message":"API key is required for server-to-server
+  requests"}. The schemas below therefore come from the provider's own
+  documentation pages rather than from tools/list, and are recorded as
+  documented rather than probed.
+  There is no OAuth surface: /.well-known/oauth-authorization-server and
+  /.well-known/oauth-protected-resource both 404 on backend.makinari.com, and
+  the server's own README states MCP uses "the same API keys as the rest of the
+  API" with no MCP-specific credential.
 server:
   name: makinari
   transport: http
   url: https://backend.makinari.com/api/mcp
-  authentication: API key (Bearer)
+  authentication: >-
+    API key sent as "Authorization: Bearer <key>" or "X-API-Key: <key>"; the
+    same keys as the rest of the API (no MCP-specific credential).
+  protocol: JSON-RPC 2.0 over HTTP POST
   docs: https://docs.makinari.com/mcp-server
   setup:
     remote: https://docs.makinari.com/mcp-server/setup/remote
     local: https://docs.makinari.com/mcp-server/setup/local
   local:
-    repository: https://github.com/Makinari/API
-    run: npm run mcp        # stdio mode
-    http_endpoint: POST /api/mcp   # JSON-RPC over HTTP
+    repository: https://github.com/Uncodier/API
+    entrypoint: mcp-server/index.ts
+    run: npm run mcp
+    alternate: npx tsx mcp-server/index.ts
+    transport: stdio
+    http_endpoint: POST /api/mcp
     environment:
-      - MCP_SITE_ID (required)
-      - MCP_USER_ID (optional)
-      - MCP_INSTANCE_ID (optional, default 'default')
-      - API_URL (optional, default http://localhost:3000)
-      - REST_API_KEY (required for remote API)
-      - SERVICE_API_KEY (required when running the API locally)
+    - MCP_SITE_ID (required)
+    - MCP_USER_ID (optional)
+    - MCP_INSTANCE_ID (optional, default 'default')
+    - API_URL (optional, default http://localhost:3000)
+    - SERVICE_API_KEY (or a key from the api_keys table) for HTTP auth
+    readme: https://github.com/Uncodier/API/blob/main/mcp-server/README.md
+deployment:
+  mode: both
+  endpoint: https://backend.makinari.com/api/mcp
+  install: npm run mcp
+  package: https://github.com/Uncodier/API
+  auth: api-key
+  verified: probed
+  probe: gated
+  probe_detail: >-
+    POST tools/list anonymous -> HTTP 401 UNAUTHORIZED (API key required).
+    Endpoint exists and is documented; tool schemas taken from the docs.
+  checked: '2026-08-13'
+  notes: >-
+    The local mode is NOT an installable package — there is no npm/PyPI
+    artifact. It requires cloning github.com/Uncodier/API and running
+    `npm run mcp` from the repo root, with MCP_SITE_ID set.
+oauth_discovery:
+  '/.well-known/oauth-authorization-server': 404
+  '/.well-known/oauth-protected-resource': 404
+  host: backend.makinari.com
+  checked: '2026-08-13'
+tool_count: 56
+tools_source: https://docs.makinari.com/mcp-server/tools
 tools:
-  - name: generateImage
-    description: Generate images using AI.
-  - name: generateVideo
-    description: Generate videos using AI.
-  - name: generateAudio
-    description: Generate audio using AI (Text-to-Speech).
-  - name: instance
-    description: Manage AI assistant instances (create, read, update).
-  - name: updateSiteSettings
-    description: Update site configuration.
-  - name: webSearch
-    description: Perform web searches.
-  - name: memories
-    description: Manage memories and context.
-  - name: tasks
-    description: Manage tasks and to-do lists.
-  - name: createProject
-    description: Create a new project (site).
-  - name: requirements
-    description: Manage project requirements.
-  - name: requirementStatus
-    description: Log progress and update statuses on a client requirement.
-  - name: leads
-    description: Manage leads and contacts.
+- name: analyzeICPTotalCount
+  description: 'Analyze the total count of ICP targets from Finder. Pass filters using finder field names:
+    person_industries, person_locations, person_skills (number[] IDs from getFinderCategoryIds), organization_domains
+    (string[]), organization_industries, organization_locations (number[] IDs), role_title, role_description.
+    Use getFinderCategoryIds first for industries/locations/skills - they require IDs. Can pass filters
+    in query object or at top level.'
+  docs: https://docs.makinari.com/mcp-server/tools/analyzeICPTotalCount
+  input_schema:
+  - name: query
+    type: object
+    description: 'Filters object. Keys: person_industries, person_locations, person_skills (number[] IDs),
+      organization_domains (string[]), organization_industries, organization_locations, organization_keywords,
+      organization_web_technologies (number[] IDs), role_title, role_description. Can be empty for total
+      count.'
+  - name: person_industries
+    type: array
+    description: 'Industry IDs from getFinderCategoryIds(category: "industries", q: "…")'
+  - name: person_locations
+    type: array
+    description: 'Location IDs from getFinderCategoryIds(category: "locations", q: "…")'
+  - name: person_skills
+    type: array
+    description: 'Skill IDs from getFinderCategoryIds(category: "person_skills", q: "…")'
+  - name: organization_domains
+    type: array
+    description: Company domains e.g. ["example.com"]
+  - name: organization_industries
+    type: array
+    description: Organization industry IDs
+  - name: organization_locations
+    type: array
+    description: Organization location IDs
+  - name: organization_keywords
+    type: array
+    description: Organization keyword IDs
+  - name: organization_web_technologies
+    type: array
+    description: Web technology IDs
+  - name: role_title
+    type: string
+    description: Job title filter
+  - name: role_description
+    type: string
+    description: Role/job description filter
+  - name: site_id
+    type: string
+    description: Optional site UUID for context
+- name: assets
+  description: Manage assets (e.g. text content, media metadata) linked to robot instances. Use action="create"
+    to create a new asset. Use action="update" to update an existing asset. Use action="list" to get assets.
+  docs: https://docs.makinari.com/mcp-server/tools/assets
+  input_schema:
+  - name: action
+    type: string
+    description: 'Action to perform on assets. Enum: create, list, update'
+  - name: asset_id
+    type: string
+    description: Asset UUID (required for update)
+  - name: file_type
+    type: string
+    description: File type (e.g. text/plain, image/png)
+  - name: instance_id
+    type: string
+    description: Robot instance UUID (required for create/list)
   - name: content
-    description: Manage content and articles.
-  - name: sendEmail
-    description: Send emails.
-  - name: configureEmail
-    description: Configure email settings.
-  - name: configureWhatsApp
-    description: Configure WhatsApp settings.
-  - name: createSecret
-    description: Store a secret securely in the Vault.
-  - name: salesOrder
-    description: Manage sales orders.
-  - name: sales
-    description: Sales-related tools.
-  - name: scheduling
-    description: Schedule appointments and events.
-  - name: getFinderCategoryIds
-    description: Get IDs for finder categories.
-  - name: analyzeICPTotalCount
-    description: Analyze total count for ICP.
-  - name: createIcpMining
-    description: Create ICP mining tasks.
-  - name: searchRegionVenues
-    description: Search for venues in a region.
-  - name: webhooks
-    description: Manage webhooks (list, create with url + events).
-  - name: urlToMarkdown
-    description: Convert URL content to Markdown.
-  - name: urlToSitemap
-    description: Generate sitemap from URL.
-  - name: segments
-    description: Manage customer segments.
-  - name: campaigns
-    description: Manage marketing campaigns.
-  - name: assets
-    description: Manage digital assets.
-  - name: instancePlan
-    description: Manage instance plans.
-  - name: instanceLogs
-    description: Instance log access (documented tool page).
-  - name: workflows
-    description: Manage workflows.
-  - name: copywriting
-    description: Copywriting tools.
-  - name: sendWhatsApp
-    description: Send WhatsApp messages.
-  - name: whatsappTemplate
-    description: Manage WhatsApp templates.
-  - name: conversations
-    description: Manage conversations.
-  - name: messages
-    description: Manage messages.
-  - name: report
-    description: Generate reports.
+    type: string
+    description: Text content of the asset
+  - name: metadata
+    type: object
+    description: Metadata JSON
+  - name: limit
+    type: number
+    description: Max results
+  - name: offset
+    type: number
+    description: Pagination offset
+- name: audience
+  description: Build and manage reusable lead audiences. Query leads by filters, store the result as a
+    named audience, then retrieve pages of leads or pass the audience to sendBulkMessages for bulk delivery
+    (use {{lead.*}} merge tokens in message/subject as in sendBulkMessages ). Audiences persist across
+    conversation turns and can hold up to 5,000 leads. Each audience is split into pages (default 50 leads
+    per page) for efficient paginated access. Actions create Query leads matching the provided filters
+    and store the result as a named audience. list List all audiences for the current site. g
+  docs: https://docs.makinari.com/mcp-server/tools/audience
+  input_schema:
+  - name: action
+    type: string
+    description: 'Yes'
+  - name: description
+    type: string
+    description: 'No'
+  - name: status
+    type: string
+    description: 'No'
+  - name: segment_id
+    type: string
+    description: 'No'
+  - name: campaign_id
+    type: string
+    description: 'No'
+  - name: assignee_id
+    type: string
+    description: 'No'
+  - name: search
+    type: string
+    description: 'No'
+  - name: origin
+    type: string
+    description: 'No'
+  - name: limit
+    type: number
+    description: 'No'
+  - name: page_size
+    type: number
+    description: 'No'
+  - name: audience_id
+    type: string
+    description: get/delete
+  - name: page
+    type: number
+    description: 'No'
+- name: audioToText
+  description: 'Converts an audio file from a given URL to text using AI. Supported formats: mp3, mp4,
+    mpeg, mpga, m4a, wav, or webm. Use this to transcribe voice notes, audio files, or extract text from
+    videos. It utilizes Gemini 1.5 Pro or OpenAI Whisper as a fallback.'
+  docs: https://docs.makinari.com/mcp-server/tools/audioToText
+  input_schema:
+  - name: audio_url
+    type: string
+    description: The valid public URL of the audio file to transcribe.
+- name: campaigns
+  description: Manage marketing campaigns. Use action="create" to create a new campaign (requires title).
+    Use action="update" to update an existing campaign (requires campaign_id). Use action="list" to get
+    campaigns with filters.
+  docs: https://docs.makinari.com/mcp-server/tools/campaigns
+  input_schema:
+  - name: action
+    type: string
+    description: 'Action to perform on campaigns. Enum: create, list, update'
+  - name: campaign_id
+    type: string
+    description: Campaign UUID (required for update)
+  - name: title
+    type: string
+    description: Campaign title
+  - name: description
+    type: string
+    description: Campaign description
+  - name: status
+    type: string
+    description: Status (e.g. pending, active, completed)
+  - name: type
+    type: string
+    description: Campaign type (e.g. email, social, ad)
+  - name: priority
+    type: string
+    description: Priority (e.g. low, medium, high)
+  - name: budget
+    type: object
+    description: Budget details
+  - name: revenue
+    type: object
+    description: Revenue details
+  - name: due_date
+    type: string
+    description: Due date (ISO string)
+  - name: site_id
+    type: string
+    description: Filter by site UUID
+  - name: user_id
+    type: string
+    description: Filter by user UUID
+  - name: limit
+    type: number
+    description: Max results
+  - name: offset
+    type: number
+    description: Pagination offset
+- name: catalog_commerce
+  description: 'Create, search, and manage catalog items and product modifiers. Default resource="item"
+    : use action="create" to add a product/service/digital_asset (requires name ; set target_sale_price
+    and is_purchasable for sellable items). Use list / get / update for items. An item with is_reservation
+    = true needs a schedule via reservation_schedules before it can be sold. Modifiers (extras like toppings
+    or size options): resource="modifier_group" — create a reusable selection group ( min_select / max_select
+    ). resource="modifier_group_item" — add catalog items as options inside the group'
+  docs: https://docs.makinari.com/mcp-server/tools/catalog_commerce
+  input_schema:
+  - name: action
+    type: string
+    description: create, list, get, update, delete (delete for modifier resources only)
+  - name: resource
+    type: string
+    description: item (default), modifier_group, modifier_group_item, item_modifier_group
+  - name: id
+    type: string
+    description: Target UUID (required for get, update, delete)
+  - name: site_id
+    type: string
+    description: Seller site UUID
+  - name: description
+    type: string
+    description: Description
+  - name: sku
+    type: string
+    description: SKU code (unique per site)
+  - name: image_url
+    type: string
+    description: Public HTTP URL for the product image
+  - name: cost
+    type: number
+    description: Cost / COGS
+  - name: lowest_sale_price
+    type: number
+    description: Minimum allowed sale price
+  - name: target_sale_price
+    type: number
+    description: Default sale price used by checkout/quotes
+  - name: kind
+    type: string
+    description: 'Kind: product, service, digital_asset'
+  - name: digital_subtype
+    type: string
+    description: 'Subtype: ticket, course, file, pass, license'
+  - name: is_marketplace_listed
+    type: boolean
+    description: True if visible in the marketplace
+  - name: is_reservation
+    type: boolean
+    description: True if the item requires a schedule/slot to be booked before checkout
+  - name: is_purchasable
+    type: boolean
+    description: True if item can be bought
+  - name: is_recurring
+    type: boolean
+    description: True if item is a subscription plan
+  - name: is_pos_available
+    type: boolean
+    description: True if item is available in Point of Sale
+  - name: status
+    type: string
+    description: 'Status: active, archived'
+  - name: availability_status
+    type: string
+    description: 'Availability: available, unavailable, sold_out'
+  - name: currency
+    type: string
+    description: Currency code (e.g. USD, MXN)
+  - name: category_id
+    type: string
+    description: Category UUID
+  - name: parent_id
+    type: string
+    description: Parent catalog item UUID (for variants)
+  - name: search
+    type: string
+    description: Search term for name/description
+  - name: sort_order
+    type: number
+    description: Sort order for display
+  - name: modifier_group_id
+    type: string
+    description: Modifier group UUID
+  - name: catalog_item_id
+    type: string
+    description: Option catalog item (group item) or host product (attachment)
+  - name: min_select
+    type: number
+    description: Minimum options the buyer must pick
+  - name: max_select
+    type: number
+    description: Maximum options (null = unlimited)
+  - name: include_modifiers
+    type: boolean
+    description: On item get, include attached groups + options
+  - name: limit
+    type: number
+    description: Limit results for list
+  - name: offset
+    type: number
+    description: Offset results for list
+- name: checkout
+  description: Manage checkouts. Use action="create_order" to create a pending sale_order with lines.
+    Use action="create_payment_link" to generate a Stripe Checkout URL for a pending order. Share this
+    URL with the buyer so they can pay. Use action="get_order" to check the status of an order (e.g. to
+    see if it became "completed" via webhook).
+  docs: https://docs.makinari.com/mcp-server/tools/checkout
+  input_schema:
+  - name: action
+    type: string
+    description: 'Action to perform: create_order, create_payment_link, get_order'
+  - name: site_id
+    type: string
+    description: Seller site UUID (defaults to current site)
+  - name: buyer_user_id
+    type: string
+    description: Buyer user UUID (required for digital assets/subscriptions)
+  - name: customer_email
+    type: string
+    description: Customer email — resolves/creates lead and used for Stripe
+  - name: lead_id
+    type: string
+    description: Lead UUID to attach to the sale
+  - name: owner_site_id
+    type: string
+    description: Owner site UUID (for B2B destination)
+  - name: source
+    type: string
+    description: 'Source of the order: quote, marketplace, shop, sales'
+  - name: lines
+    type: string
+    description: 'JSON string of order lines. Each line needs: catalogItemId, quantity. Optional modifiers:
+      [{ catalogItemId, quantity, unitPriceOverride? }] for nested extras. For reservable items, include
+      reservationStart and reservationEnd (ISO datetimes).'
+  - name: order_id
+    type: string
+    description: Order UUID (required for create_payment_link, get_order)
+  - name: return_url
+    type: string
+    description: Optional URL to redirect buyer after payment (defaults to commerce app /buyer/orders)
+- name: configureEmail
+  description: '(AgentMail): create or verify domains, create or delete inboxes, check domain existence,
+    get domain info or DNS zone file. Required: action. Then provide the params for that action (e.g.
+    domain and feedback_enabled for create_domain; username and domain for create_inbox; inbox_id for
+    delete_inbox; domain_id or domain for verify_domain, get_domain_info, get_zone_file, check_domain_exists).'
+  docs: https://docs.makinari.com/mcp-server/tools/configureEmail
+  input_schema:
+  - name: action
+    type: string
+    description: 'One of: create_domain (add a domain for sending), create_inbox (create email inbox for
+      a domain), delete_inbox (remove an inbox), verify_domain (trigger DNS verification), check_domain_exists
+      (check if domain is registered), get_domain_info (get domain status and DNS records), get_zone_file
+      (get DNS zone file content). Enum: create_domain, create_inbox, delete_inbox, verify_domain, check_domain_exists,
+      get_domain_info, get_zone_file'
+  - name: domain
+    type: string
+    description: Domain name. Used by create_domain, create_inbox, check_domain_exists; also as domain_id
+      for verify_domain, get_domain_info, get_zone_file.
+  - name: domain_id
+    type: string
+    description: Domain ID (usually the domain name). For verify_domain, get_domain_info, get_zone_file.
+  - name: feedback_enabled
+    type: boolean
+    description: 'For create_domain: enable bounce/feedback tracking (default false).'
+  - name: username
+    type: string
+    description: 'For create_inbox: local part of the email (e.g. "hello" for hello@domain.com).'
+  - name: display_name
+    type: string
+    description: 'For create_inbox: optional display name for the inbox.'
+  - name: client_id
+    type: string
+    description: 'For create_inbox: optional client identifier.'
+  - name: inbox_id
+    type: string
+    description: 'For delete_inbox: AgentMail inbox ID to delete.'
+- name: configureWhatsApp
+  description: 'Configure WhatsApp Configure WhatsApp for the site: get_config (check if WhatsApp is set
+    up and which number is used) or set_credentials (save Twilio/WhatsApp Business account_sid, access_token,
+    and optional from_number). Required: action. For set_credentials also provide account_sid, access_token,
+    and optionally from_number (e.g. +1234567890).'
+  docs: https://docs.makinari.com/mcp-server/tools/configureWhatsApp
+  input_schema:
+  - name: action
+    type: string
+    description: 'One of: get_config (check if WhatsApp is configured for the site; returns configured,
+      from_number, token_stored), set_credentials (save account_sid, access_token, and optional from_number;
+      stores token encrypted in secure_tokens). Enum: get_config, set_credentials'
+  - name: account_sid
+    type: string
+    description: 'For set_credentials: Twilio Account SID (or WhatsApp Business phone number ID).'
+  - name: access_token
+    type: string
+    description: 'For set_credentials: Twilio Auth Token or WhatsApp API access token (stored encrypted).'
+  - name: from_number
+    type: string
+    description: 'For set_credentials: WhatsApp Business phone number in international format (e.g. +1234567890).'
+- name: content
+  description: Manage content. Use action="create" to create new content (requires title, type). Use action="update"
+    to update existing content (requires content_id). Use action="list" to get content items with filters.
+  docs: https://docs.makinari.com/mcp-server/tools/content
+  input_schema:
+  - name: action
+    type: string
+    description: 'Action to perform on content. Enum: create, list, update'
+  - name: content_id
+    type: string
+    description: Content UUID (required for update/get single)
+  - name: title
+    type: string
+    description: Content title (required for create)
+  - name: type
+    type: string
+    description: 'Content type: blog_post, video, podcast, social_post, newsletter, case_study, whitepaper,
+      infographic, webinar, ebook, ad, landing_page (required for create)'
+  - name: description
+    type: string
+    description: Short description or excerpt
+  - name: status
+    type: string
+    description: 'Content status: draft, review, approved, published, archived'
+  - name: segment_id
+    type: string
+    description: Segment UUID
+  - name: text
+    type: string
+    description: Body content / main text
+  - name: tags
+    type: array
+    description: Tags for categorization
+  - name: instructions
+    type: string
+    description: Instructions for AI content generation or editing
+  - name: campaign_id
+    type: string
+    description: Campaign UUID
+  - name: metadata
+    type: object
+    description: JSON object. For bulk templates, you may set placeholders.when_unresolved to strip_tokens
+      or skip_recipient (see sendBulkMessages).
+  - name: site_id
+    type: string
+    description: Filter by site UUID
+  - name: user_id
+    type: string
+    description: Filter by user UUID
+  - name: search
+    type: string
+    description: Text search in title, description, text
+  - name: limit
+    type: number
+    description: Max results (default 50)
+  - name: offset
+    type: number
+    description: Pagination offset
+- name: conversations
+  description: 'List company conversations. Use action="list" with optional filters: lead_id, visitor_id,
+    user_id, agent_id, status (conversation status e.g. active), channel (e.g. whatsapp, email, chat),
+    custom_data_status (value of custom_data.status).'
+  docs: https://docs.makinari.com/mcp-server/tools/conversations
+  input_schema:
+  - name: action
+    type: string
+    description: 'Action to perform (list only). Enum: list'
+  - name: lead_id
+    type: string
+    description: Filter by lead UUID
+  - name: visitor_id
+    type: string
+    description: Filter by visitor UUID
+  - name: user_id
+    type: string
+    description: Filter by user UUID
+  - name: agent_id
+    type: string
+    description: Filter by agent UUID
+  - name: status
+    type: string
+    description: Filter by conversation status (e.g. active, closed)
+  - name: channel
+    type: string
+    description: Filter by channel (e.g. whatsapp, email, chat)
+  - name: custom_data_status
+    type: string
+    description: Filter by custom_data.status (JSONB key)
+  - name: limit
+    type: number
+    description: Max results (default 10)
+  - name: offset
+    type: number
+    description: Pagination offset
+- name: copywriting
+  description: Manage copywriting templates and approved copies. Use action="create" to create new copy
+    (requires title, copy_type, content). Use action="update" to update existing copy (requires copywriting_id).
+    Use action="list" to get copies with filters. Use action="get" to get a single copy by id. Use action="delete"
+    to remove a copy.
+  docs: https://docs.makinari.com/mcp-server/tools/copywriting
+  input_schema:
+  - name: action
+    type: string
+    description: 'Action to perform on copywriting templates. Enum: create, list, update, delete, get'
+  - name: copywriting_id
+    type: string
+    description: Copywriting UUID (required for update/delete/get single)
+  - name: title
+    type: string
+    description: Title of the copy (required for create)
+  - name: copy_type
+    type: string
+    description: 'Type of copy (required for create). Enum: email, sms, whatsapp, web_content, social_media,
+      ad_copy, sales_script, other'
+  - name: content
+    type: string
+    description: The actual text content of the copy (required for create)
+  - name: status
+    type: string
+    description: 'Status of the copy. Use "approved" for ready-to-use content. Enum: draft, review, approved,
+      archived'
+  - name: target_audience
+    type: string
+    description: Who this copy is intended for
+  - name: use_case
+    type: string
+    description: When to use this copy
+  - name: notes
+    type: string
+    description: Internal notes about this copy
+  - name: tags
+    type: array
+    description: Tags for categorization
+  - name: site_id
+    type: string
+    description: Filter by site UUID
+  - name: user_id
+    type: string
+    description: Filter by user UUID
+  - name: search
+    type: string
+    description: Text search in title, content, target_audience
+  - name: limit
+    type: number
+    description: Max results (default 50)
+  - name: offset
+    type: number
+    description: Pagination offset
+- name: createIcpMining
+  description: 'Create an ICP mining run in Finder. Pass filters using finder field names: person_industries,
+    person_locations, person_skills (number[] IDs from getFinderCategoryIds), organization_domains (string[]),
+    organization_industries, organization_locations (number[] IDs), role_title, role_description. Use
+    getFinderCategoryIds first for industries/locations/skills. At least one filter required. Optional:
+    name, segment_id, total_targets.'
+  docs: https://docs.makinari.com/mcp-server/tools/createIcpMining
+  input_schema:
+  - name: query
+    type: object
+    description: 'Filters object. Keys: person_industries, person_locations, person_skills (number[] IDs),
+      organization_domains (string[]), organization_industries, organization_locations, role_title, role_description.
+      At least one filter required.'
+  - name: person_industries
+    type: array
+    description: Industry IDs from getFinderCategoryIds
+  - name: person_locations
+    type: array
+    description: Location IDs from getFinderCategoryIds
+  - name: person_skills
+    type: array
+    description: Skill IDs from getFinderCategoryIds
+  - name: organization_domains
+    type: array
+    description: Company domains e.g. ["example.com"]
+  - name: organization_industries
+    type: array
+    description: Organization industry IDs
+  - name: organization_locations
+    type: array
+    description: Organization location IDs
+  - name: organization_keywords
+    type: array
+    description: Organization keyword IDs
+  - name: organization_web_technologies
+    type: array
+    description: Web technology IDs
+  - name: role_title
+    type: string
+    description: Job title filter
+  - name: role_description
+    type: string
+    description: Role/job description filter
+  - name: segment_id
+    type: string
+    description: Optional segment UUID
+  - name: total_targets
+    type: number
+    description: Optional estimated total targets count
+- name: createProject
+  description: Create a new project (site) for the user. A project in Makinari corresponds to a site structure
+    and is the container for all assets, leads, tasks, and configurations.
+  docs: https://docs.makinari.com/mcp-server/tools/createProject
+  input_schema:
+  - name: domain
+    type: string
+    description: The domain for the new project/site (optional)
+- name: createSecret
+  description: 'Store a secret securely in the Vault. Use this to save API keys, credentials, or sensitive
+    data. Returns the ID of the created secret but NOT the secret value. This tool is write-only, you
+    cannot read the secret back using this tool. API Endpoint POST /api/agents/tools/createSecret Request
+    Body site_id (string, required): The site identifier. name (string, required): A recognizable name
+    for the secret. description (string, required): Description of the secret. secret (string, required):
+    The sensitive secret value. Response Returns'
+  docs: https://docs.makinari.com/mcp-server/tools/createSecret
+  input_schema: []
+- name: deals
+  description: Manage sales deals and opportunities. Use action="create" to record a new deal. Use action="update"
+    to modify a deal. Use action="list" to search deals. Use action="delete" to remove a deal record.
+  docs: https://docs.makinari.com/mcp-server/tools/deals
+  input_schema:
+  - name: action
+    type: string
+    description: 'Action to perform on deals. Enum: create, list, update, delete'
+  - name: deal_id
+    type: string
+    description: Deal UUID (required for update/delete)
+  - name: site_id
+    type: string
+    description: Site UUID
+  - name: amount
+    type: number
+    description: Deal amount
+  - name: currency
+    type: string
+    description: Currency code (e.g. USD)
+  - name: stage
+    type: string
+    description: Deal stage in the sales pipeline (e.g. prospecting, proposal, negotiation, closed_won)
+  - name: status
+    type: string
+    description: Overall deal status (e.g. open, won, lost)
+  - name: company_id
+    type: string
+    description: Company UUID
+  - name: expected_close_date
+    type: string
+    description: Date string for expected close (YYYY-MM-DD)
+  - name: notes
+    type: string
+    description: Deal notes
+  - name: qualification_score
+    type: number
+    description: Qualification score
+  - name: qualification_criteria
+    type: object
+    description: JSON object with qualification specifics
+  - name: sales_order_id
+    type: string
+    description: Related Sale/Order UUID if closed
+  - name: lead_ids
+    type: array
+    description: Array of Lead UUIDs attached to this deal
+  - name: owner_ids
+    type: array
+    description: Array of User UUIDs who own this deal
+  - name: limit
+    type: number
+    description: Limit results
+  - name: offset
+    type: number
+    description: Offset results
+- name: entitlements
+  description: Read and manage digital entitlements. Use action="list" to find entitlements by buyer or
+    status. Use action="get" to read a single entitlement. Use action="update" to change status (e.g.
+    to "revoked" or "used") or update expires_at. Do not invent grants here; entitlements are normally
+    created via Stripe webhook after a checkout.
+  docs: https://docs.makinari.com/mcp-server/tools/entitlements
+  input_schema:
+  - name: action
+    type: string
+    description: 'Action to perform: list, get, update'
+  - name: id
+    type: string
+    description: Entitlement UUID (required for get, update)
+  - name: site_id
+    type: string
+    description: Seller site UUID
+  - name: buyer_user_id
+    type: string
+    description: Buyer user UUID
+  - name: owner_site_id
+    type: string
+    description: Destination owner site UUID
+  - name: status
+    type: string
+    description: 'Entitlement status: active, revoked, expired, used'
+  - name: source_type
+    type: string
+    description: 'Source type: purchase or subscription'
+  - name: expires_at
+    type: string
+    description: Expiration date (ISO string)
+  - name: limit
+    type: number
+    description: Limit results for list
+  - name: offset
+    type: number
+    description: Offset results for list
+- name: extractFrames
+  description: Extracts frames (images) from a video or GIF URL. Returns an array of base64 images that
+    can be analyzed or stored. Useful for visually understanding a video by passing the frames to a vision
+    model.
+  docs: https://docs.makinari.com/mcp-server/tools/extractFrames
+  input_schema:
+  - name: video_url
+    type: string
+    description: The valid public URL of the video or GIF to extract frames from.
+  - name: frame_count
+    type: number
+    description: Number of frames to extract evenly spaced across the video (default 5, max 10).
+- name: generateAudio
+  description: 'The generateAudio tool allows AI assistants to generate audio from text (Text-to-Speech)
+    using AI providers. Currently, it fully supports the gemini provider (default) and vercel provider
+    (which interfaces with OpenAI''s TTS). Use Cases Converting text responses or generated stories into
+    playable audio files. Narrating content for multimedia creation. Creating voice messages or podcast-style
+    content within the conversation. Parameters The tool accepts the following parameters: Parameter Type
+    Required Description text string Y'
+  docs: https://docs.makinari.com/mcp-server/tools/generateAudio
+  input_schema:
+  - name: text
+    type: string
+    description: 'Yes'
+  - name: provider
+    type: string
+    description: 'No'
+  - name: voice
+    type: string
+    description: 'No'
+  - name: format
+    type: string
+    description: 'No'
+  - name: model
+    type: string
+    description: 'No'
+- name: generateImage
+  description: Generate images using AI with automatic provider fallback. Supports multiple AI providers
+    (Gemini, Azure, Vercel) with automatic fallback if one fails. Images are automatically saved to storage
+    and can be used in conversations or content.
+  docs: https://docs.makinari.com/mcp-server/tools/generateImage
+  input_schema:
+  - name: prompt
+    type: string
+    description: Detailed text description of the image to generate. Be specific about style, colors,
+      composition, and any important details.
+  - name: provider
+    type: string
+    description: AI provider to use for generation. Only Gemini is currently supported.
+  - name: size
+    type: string
+    description: 'Size of the generated image. Defaults to 1024x1024 for best quality. Enum: 256x256,
+      512x512, 1024x1024'
+  - name: n
+    type: number
+    description: Number of images to generate. Defaults to 1.
+  - name: quality
+    type: string
+    description: 'Quality of the generated image. HD quality is higher resolution but may take longer.
+      Defaults to standard. Enum: standard, hd'
+  - name: ratio
+    type: string
+    description: 'Aspect ratio of the generated image. Defaults to 1:1 (square). Enum: 1:1, 4:3, 3:4,
+      16:9, 9:16, 3:2, 2:3'
+  - name: reference_images
+    type: array
+    description: Array of image URLs to use as reference/context for generation. Images will be converted
+      to base64 and sent as context to the AI model.
+- name: generateVideo
+  description: Generate videos using AI with automatic provider fallback. Supports Gemini Veo 3.1 for
+    video generation. Videos are automatically saved to storage and can be used in conversations or content.
+  docs: https://docs.makinari.com/mcp-server/tools/generateVideo
+  input_schema:
+  - name: prompt
+    type: string
+    description: Detailed text description of the video to generate. Be specific about style, colors,
+      composition, movement, and any important details.
+  - name: provider
+    type: string
+    description: AI provider to use for generation. Only Gemini is currently supported.
+  - name: duration_seconds
+    type: number
+    description: Desired duration of the video in seconds. Will be mapped to valid values (4, 6, or 8
+      seconds) by the API. Defaults to 8 seconds.
+  - name: aspect_ratio
+    type: string
+    description: 'Aspect ratio of the generated video. Note: Gemini only supports 16:9 and 9:16, other
+      ratios will be mapped to 16:9. Defaults to 16:9. Enum: 1:1, 4:3, 3:4, 16:9, 9:16, 3:2, 2:3'
+  - name: reference_images
+    type: array
+    description: Array of image URLs (up to 3) to use as reference/context for generation. Images will
+      be converted to base64 and sent as context to the AI model. When using reference images, duration
+      must be 8 seconds.
+  - name: quality
+    type: string
+    description: 'Quality of the generated video. "preview" and "standard" use 720p. "pro" uses 1080p
+      but requires duration=8 and aspect_ratio=16:9. Defaults to standard. Enum: preview, standard, pro'
+  - name: model
+    type: string
+    description: 'Override the Gemini model to use (default: veo-3.1-generate-preview).'
+- name: getFinderCategoryIds
+  description: 'category IDs from Finder autocomplete. Categories: industries, organizations, organization_keywords,
+    locations, person_skills, web_technologies. Returns results with id and text. IMPORTANT: Use this
+    tool BEFORE analyzeICPTotalCount or createIcpMining when the user mentions industries, locations,
+    job skills, etc. - those tools require IDs, not free text. Search with q to find the correct ID.'
+  docs: https://docs.makinari.com/mcp-server/tools/getFinderCategoryIds
+  input_schema:
+  - name: category
+    type: string
+    description: 'Category to search: industries, organizations, organization_keywords, locations, person_skills,
+      web_technologies. Enum: industries, organizations, organization_keywords, locations, person_skills,
+      web_technologies'
+  - name: q
+    type: string
+    description: Search term (e.g. "technology", "New York", "Marketing Manager") to find matching IDs
+  - name: page
+    type: number
+    description: Page number for pagination (default 1)
+- name: instance
+  description: 'Manage AI assistant instances (CRU operations: create, read, update). Use "create" to
+    start a new instance for a specific activity. Use "read" to get details of the current instance or
+    list instances for the site. Use "update" to automatically rename the instance based on context (if
+    it has a generic name or the objective changed) or update other properties. IMPORTANT: You MUST call
+    this tool with action "update" if the instance has a generic name ("Assistant Session", "New Instance",
+    etc.) or if the conversation objective has changed significantly.'
+  docs: https://docs.makinari.com/mcp-server/tools/instance
+  input_schema:
+  - name: action
+    type: string
+    description: 'The action to perform. Enum: "create", "read", "update".'
+  - name: site_id
+    type: string
+    description: Site UUID (required for create and read, optional for update).
+  - name: instance_id
+    type: string
+    description: Instance UUID (optional, defaults to current instance).
+  - name: activity
+    type: string
+    description: 'Required for create: The main activity or purpose of the new instance.'
+  - name: context
+    type: string
+    description: 'Optional for update: Context about what the user is trying to accomplish for smart renaming.'
+  - name: status
+    type: string
+    description: 'Optional for create and update: Set status (e.g. running, paused, stopped). On create
+      defaults to "running".'
+  - name: limit
+    type: number
+    description: 'Optional for read: Limit number of results.'
+  - name: offset
+    type: number
+    description: 'Optional for read: Offset for pagination.'
+- name: instanceLogs
+  description: The instance_logs tool enables you to create and list logs associated with an instance.
+    Use this tool whenever you perform significant actions that should be tracked, encounter errors, or
+    need to review the history of actions performed by you or the user within an instance. Parameters
+    Parameter Type Required Description action string No The action to perform ( create or list ). Defaults
+    to create . instance_id string No The ID of the instance processing the requirement (defaults to current
+    instance). user_id string No The ID
+  docs: https://docs.makinari.com/mcp-server/tools/instanceLogs
+  input_schema:
+  - name: action
+    type: string
+    description: 'No'
+  - name: instance_id
+    type: string
+    description: 'No'
+  - name: user_id
+    type: string
+    description: 'No'
+  - name: log_type
+    type: string
+    description: Yes*
+  - name: level
+    type: string
+    description: Yes*
+  - name: message
+    type: string
+    description: Yes*
+  - name: details
+    type: object
+    description: 'No'
+  - name: limit
+    type: number
+    description: 'No'
+  - name: offset
+    type: number
+    description: 'No'
+- name: instancePlan
+  description: 'Manage instance plans. IMPORTANT: Instance plans are strict execution paths for YOU (the
+    agent), composed of tool calls, processes, reviews, discussions, or user inputs to ensure task success.
+    They are NOT general plans for the user. Use action="create" to define a new execution path (use when
+    the plan is different from the previous one). Use action="list" to get current plans; use action="update"
+    to add new steps or reopen an existing plan (same objective, just new steps). Use action="execute_step"
+    to execute and record the result of each step individually. Always finish executi'
+  docs: https://docs.makinari.com/mcp-server/tools/instancePlan
+  input_schema:
+  - name: action
+    type: string
+    description: 'Action to perform on instance plans. Enum: create, list, update, execute_step'
+  - name: instance_id
+    type: string
+    description: Instance UUID (required for create/list if not running in instance context)
+  - name: plan_id
+    type: string
+    description: Plan UUID (required for update, and execute_step)
+  - name: step_id
+    type: string
+    description: Step UUID (required for execute_step)
+  - name: step_output
+    type: string
+    description: Output of the executed step (required for execute_step)
+  - name: step_status
+    type: string
+    description: 'Status of the executed step (required for execute_step). Enum: pending, in_progress,
+      completed, failed'
+  - name: title
+    type: string
+    description: Plan title
+  - name: description
+    type: string
+    description: Plan description
+  - name: plan_type
+    type: string
+    description: 'Type of plan. Must be one of: objective, task. Default: objective. Enum: objective,
+      task'
+  - name: instructions
+    type: string
+    description: Overall instructions for the plan
+  - name: expected_output
+    type: string
+    description: Overall expected output of the plan
+  - name: success_criteria
+    type: array
+    description: Criteria for successful completion
+  - name: validation_rules
+    type: array
+    description: Rules for validating the plan execution
+  - name: status
+    type: string
+    description: 'Plan status. For create, use "pending" or leave empty for default. Enum: pending, in_progress,
+      completed, failed, cancelled, paused'
+  - name: steps
+    type: array
+    description: Array of plan steps with detailed properties.
+  - name: site_id
+    type: string
+    description: Site UUID
+  - name: user_id
+    type: string
+    description: User UUID
+  - name: agent_id
+    type: string
+    description: Agent UUID
+  - name: limit
+    type: number
+    description: Limit results
+  - name: offset
+    type: number
+    description: Offset results
+- name: leads
+  description: Manage leads. Use action="create" to create a new lead (requires name, email). Use action="update"
+    to update an existing lead (requires lead_id). Use action="list" to get leads with filters. Use action="qualify"
+    to change status (requires status). Use action="identify" to identify a visitor (requires visitor_id).
+  docs: https://docs.makinari.com/mcp-server/tools/leads
+  input_schema:
+  - name: action
+    type: string
+    description: 'Action to perform on leads. Enum: create, list, update, qualify, identify'
+  - name: lead_id
+    type: string
+    description: Lead UUID
+  - name: email
+    type: string
+    description: Email address
+  - name: phone
+    type: string
+    description: Phone number
+  - name: position
+    type: string
+    description: Job title/position
+  - name: company
+    type: string
+    description: Company name
+  - name: notes
+    type: string
+    description: Notes
+  - name: status
+    type: string
+    description: new, contacted, qualified, converted, lost
+  - name: origin
+    type: string
+    description: Lead source (e.g. website, referral)
+  - name: segment_id
+    type: string
+    description: Segment UUID
+  - name: campaign_id
+    type: string
+    description: Campaign UUID
+  - name: assignee_id
+    type: string
+    description: Assignee user UUID
+  - name: site_id
+    type: string
+    description: Filter by site UUID
+  - name: user_id
+    type: string
+    description: Filter by user UUID
+  - name: search
+    type: string
+    description: Text search in name, email, notes
+  - name: limit
+    type: number
+    description: Max results (default 50)
+  - name: offset
+    type: number
+    description: Pagination offset
+  - name: sort_by
+    type: string
+    description: Field to sort by
+  - name: sort_order
+    type: string
+    description: 'Sort order. Enum: asc, desc'
+  - name: visitor_id
+    type: string
+    description: Visitor UUID
+  - name: lead_score
+    type: number
+    description: Score 1-100
+  - name: source
+    type: string
+    description: Lead source
+  - name: contact_info
+    type: object
+    description: Contact details
+  - name: company_info
+    type: object
+    description: Company details
+  - name: interest_level
+    type: string
+    description: Interest level
+  - name: product_interest
+    type: string
+    description: Product interest
+  - name: pages_visited
+    type: array
+    description: Pages visited
+  - name: time_spent
+    type: number
+    description: Time spent
+  - name: visit_count
+    type: number
+    description: Visit count
+- name: memories
+  description: 'Manage agent memories. Actions: "save" (create new), "list" (search/filter), "update"
+    (modify existing), "delete" (remove).'
+  docs: https://docs.makinari.com/mcp-server/tools/memories
+  input_schema:
+  - name: action
+    type: string
+    description: 'Action to perform on memories. Enum: save, list, update, delete'
+  - name: content
+    type: string
+    description: The content to save or update. Required for "save", optional for "update".
+  - name: key
+    type: string
+    description: Optional categorization key (e.g. "user_preferences"). used in save/update.
+  - name: memory_id
+    type: string
+    description: The ID of the memory to update or delete. Required for "update" and "delete" actions.
+  - name: search_query
+    type: string
+    description: Optional search term to filter memories (searches in content, summary, and key).
+  - name: type
+    type: string
+    description: Optional memory type filter. Default is "assistant_note".
+  - name: limit
+    type: number
+    description: Maximum number of memories to return. Default 10.
+  - name: client_id
+    type: string
+    description: Optional. Scope to a specific client.
+  - name: project_id
+    type: string
+    description: Optional. Scope to a specific project.
+  - name: task_id
+    type: string
+    description: Optional. Scope to a specific task.
+- name: messages
+  description: 'List messages for this site. Rules: Always provide conversation_id when you have it -
+    site-wide queries are slower and return less context. Use role="user" to see only visitor/lead messages;
+    role="assistant" for bot replies. Default limit is 50 (max 100). Check pagination.has_more before
+    paginating further. Stop paginating when has_more=false or when you have found the information you
+    need - do NOT blindly paginate through hundreds of records. If you get an error, do NOT retry with
+    a higher offset. Instead, try a narrower filter (e.g. add conversation_id or lead_id).'
+  docs: https://docs.makinari.com/mcp-server/tools/messages
+  input_schema:
+  - name: action
+    type: string
+    description: 'Action to perform (only "list" is supported). Enum: list'
+  - name: conversation_id
+    type: string
+    description: Preferred. Filter to a single conversation UUID. Omit only when you need site-wide results.
+  - name: lead_id
+    type: string
+    description: Filter by lead UUID.
+  - name: role
+    type: string
+    description: 'Filter by message role. Enum: user, assistant, system, team_member'
+  - name: interaction
+    type: string
+    description: Filter by interaction type (e.g. opened, clicked - for email tracking).
+  - name: custom_data_status
+    type: string
+    description: Filter by custom_data.status (JSONB field).
+  - name: limit
+    type: number
+    description: Max results per page. Default 50, max 100.
+  - name: offset
+    type: number
+    description: Pagination offset. Only increment if has_more=true in the previous response.
+- name: publish
+  description: 'The publish tool is a consolidated tool that allows the agent to perform multiple publishing
+    actions in a single tool call. It can: Create or Update Content: Save content to the database with
+    a published status, including metadata like assets and URLs. Publish to Social Media: Publish the
+    content to specified social media accounts via Outstand. Send to Audience: Send the content as a bulk
+    message to an audience via WhatsApp or Email. Usage You must provide at least one valid source of
+    content: text , assets (media IDs), or urls . You must als'
+  docs: https://docs.makinari.com/mcp-server/tools/publish
+  input_schema: []
+- name: purchase_items
+  description: Manage line items on a vendor bill / purchase order. Use after creating a purchases header.
+    Use action="create" to add a line (requires purchase_id and name or catalog_item_id). Totals on the
+    parent purchase are recalculated automatically.
+  docs: https://docs.makinari.com/mcp-server/tools/purchase_items
+  input_schema:
+  - name: action
+    type: string
+    description: 'Action to perform: create, list, update, delete'
+  - name: id
+    type: string
+    description: Item UUID (required for update, delete)
+  - name: purchase_id
+    type: string
+    description: Purchase UUID (required for create, list)
+  - name: catalog_item_id
+    type: string
+    description: Catalog Item UUID (optional; hydrates name/unit_cost)
+  - name: quantity
+    type: number
+    description: Quantity (defaults to 1)
+  - name: unit_cost
+    type: number
+    description: Unit cost (optional if catalog_item_id provides cost)
+  - name: limit
+    type: number
+    description: Limit results for list
+  - name: offset
+    type: number
+    description: Offset results for list
+- name: purchases
+  description: Manage vendor bills / purchase orders (accounts payable). Use for money owed or paid to
+    suppliers — NOT buyer checkout. Use action="create" for a draft header (requires title). Use purchase_items
+    to add lines. Use action="register_payment" to record a supplier payment.
+  docs: https://docs.makinari.com/mcp-server/tools/purchases
+  input_schema:
+  - name: action
+    type: string
+    description: 'Action to perform: create, list, get, update, delete, register_payment'
+  - name: id
+    type: string
+    description: Purchase UUID (required for get, update, delete, register_payment)
+  - name: site_id
+    type: string
+    description: Site UUID
+  - name: title
+    type: string
+    description: Bill / PO title (required for create)
+  - name: vendor_company_id
+    type: string
+    description: Vendor company UUID
+  - name: status
+    type: string
+    description: 'Purchase status: draft, pending, completed, cancelled'
+  - name: amount_due
+    type: number
+    description: Amount still due to the vendor
+  - name: currency
+    type: string
+    description: Currency code (e.g. USD, MXN)
+  - name: purchase_date
+    type: string
+    description: Purchase date (YYYY-MM-DD)
+  - name: location_id
+    type: string
+    description: Location UUID (warehouse / site location)
+  - name: notes
+    type: string
+    description: Notes for the purchase
+  - name: amount
+    type: number
+    description: Payment amount (required for register_payment)
+  - name: method
+    type: string
+    description: Payment method (required for register_payment)
+  - name: payment_notes
+    type: string
+    description: Optional notes for register_payment
+  - name: limit
+    type: number
+    description: Limit results for list
+  - name: offset
+    type: number
+    description: Offset results for list
+- name: quotation_items
+  description: Manage lines (items) inside a quotation. Use action="create" to add an item. Use action="update"
+    to change quantity/price. Use action="delete" to remove an item. These actions automatically recalculate
+    the quotation totals.
+  docs: https://docs.makinari.com/mcp-server/tools/quotation_items
+  input_schema:
+  - name: action
+    type: string
+    description: 'Action to perform: create, list, update, delete'
+  - name: id
+    type: string
+    description: Item UUID (required for update, delete)
+  - name: quotation_id
+    type: string
+    description: Quotation UUID (required for create, list)
+  - name: catalog_item_id
+    type: string
+    description: Catalog Item UUID
+  - name: quantity
+    type: number
+    description: Quantity (defaults to 1)
+  - name: unit_price
+    type: number
+    description: Unit price
+  - name: metadata
+    type: string
+    description: JSON string of metadata
+  - name: limit
+    type: number
+    description: Limit results for list
+  - name: offset
+    type: number
+    description: Offset results for list
+- name: quotations
+  description: Manage commercial quotations. Use action="create" to start a draft quotation (requires
+    lead_id). Use action="update" to change status (draft, sent, rejected, expired). Use action="list"
+    or "get" to read. Use action="delete" to remove.
+  docs: https://docs.makinari.com/mcp-server/tools/quotations
+  input_schema:
+  - name: action
+    type: string
+    description: 'Action to perform: create, list, get, update, delete'
+  - name: id
+    type: string
+    description: Quotation UUID (required for get, update, delete)
+  - name: site_id
+    type: string
+    description: Site UUID (seller site)
+  - name: deal_id
+    type: string
+    description: Deal UUID to attach this quotation to
+  - name: lead_id
+    type: string
+    description: Lead UUID (required for create)
+  - name: buyer_user_id
+    type: string
+    description: Buyer user UUID
+  - name: price_list_id
+    type: string
+    description: Price list UUID to apply
+  - name: status
+    type: string
+    description: 'Quotation status: draft, sent, rejected, expired'
+  - name: valid_until
+    type: string
+    description: Valid until date (ISO string)
+  - name: currency
+    type: string
+    description: Currency code (e.g. USD)
+  - name: notes
+    type: string
+    description: Notes for the quotation
+  - name: limit
+    type: number
+    description: Limit results for list
+  - name: offset
+    type: number
+    description: Offset results for list
+- name: report
+  description: 'Query data from the database. Use action="list" to get up to 50 records. Use action="count"
+    to get the total matching a filter. IMPORTANT - column reference (the schema is also returned in every
+    response as table_schema): • leads: id, created_at, name, email, phone, … • conversations: id, created_at,
+    status, channel, … … (schema summary) Tables WITHOUT a direct site_id (scoped automatically via join
+    - do NOT filter by site_id on these): • messages - scoped via conversations.site_id • agent_memories
+    - scoped via agents.site_id Rules: Never add a site_id filter - it is applied automatical'
+  docs: https://docs.makinari.com/mcp-server/tools/report
+  input_schema:
+  - name: action
+    type: string
+    description: '"list" returns rows. "count" returns only the total. Enum: list, count'
+  - name: table
+    type: string
+    description: 'Table to query. Enum: leads, conversations, messages, tasks, campaigns, segments, content,
+      requirements, agents, commands, visitors, agent_memories, sites'
+  - name: columns
+    type: array
+    description: Columns to return. Omit to return all. Use only column names from table_schema.
+  - name: filters
+    type: array
+    description: Filter conditions. Do NOT include site_id - it is automatic.
+  - name: order_by
+    type: string
+    description: 'Column to sort by. Default: created_at.'
+  - name: order_dir
+    type: string
+    description: 'Default: desc. Enum: asc, desc'
+  - name: limit
+    type: number
+    description: 'Max rows (1–50). Default: 50.'
+  - name: offset
+    type: number
+    description: Pagination offset. Start at 0.
+- name: requirementStatus
+  description: The requirement_status tool allows you to log progress and update stages on a client requirement,
+    as well as list the stage history for a specific requirement. Use this tool whenever there's an update,
+    failure, or completion of a task requested by the client. It stores an entry into the requirement_status
+    database and optionally updates the parent requirement. Parameters Parameter Type Required Description
+    action string No The action to perform ( create or list ). Defaults to create . requirement_id string
+    Yes The I
+  docs: https://docs.makinari.com/mcp-server/tools/requirementStatus
+  input_schema:
+  - name: action
+    type: string
+    description: 'No'
+  - name: requirement_id
+    type: string
+    description: 'Yes'
+  - name: instance_id
+    type: string
+    description: 'No'
+  - name: asset_id
+    type: string
+    description: Yes*
+  - name: status
+    type: string
+    description: Yes*
+  - name: repo_url
+    type: string
+    description: 'No'
+  - name: preview_url
+    type: string
+    description: 'No'
+  - name: source_code
+    type: string
+    description: 'No'
+  - name: message
+    type: string
+    description: 'No'
+  - name: cycle
+    type: string
+    description: 'No'
+  - name: endpoint_url
+    type: string
+    description: 'No'
+- name: requirements
+  description: Manage requirements. Use action="create" to create a new requirement (requires title).
+    Use action="update" to update an existing requirement (requires requirement_id). Use action="list"
+    to get requirements with filters.
+  docs: https://docs.makinari.com/mcp-server/tools/requirements
+  input_schema:
+  - name: action
+    type: string
+    description: 'Action to perform on requirements. Enum: create, list, update'
+  - name: requirement_id
+    type: string
+    description: Requirement UUID (required for update)
+  - name: title
+    type: string
+    description: Requirement title (required for create)
+  - name: description
+    type: string
+    description: Detailed description
+  - name: instructions
+    type: string
+    description: Implementation instructions. MUST specify if it will be executed as an ‘external deliverable'
+      or ‘using Makinari tools', and should be formatted for AI execution.
+  - name: priority
+    type: string
+    description: 'Priority of the requirement. Valid values: high, medium, low. Default: medium. Enum:
+      high, medium, low'
+  - name: status
+    type: string
+    description: 'Status of the requirement. Valid values: backlog, validated, in-progress, on-review,
+      done, canceled. Default: backlog. Enum: backlog, validated, in-progress, on-review, done, canceled'
+  - name: completion_status
+    type: string
+    description: 'Completion status of the requirement. Valid values: pending, completed, rejected. Enum:
+      pending, completed, rejected'
+  - name: type
+    type: string
+    description: 'Type of requirement (e.g., content, design, task, develop, analytics, etc.). Default:
+      task'
+  - name: budget
+    type: number
+    description: Budget amount (numeric)
+  - name: cron
+    type: string
+    description: Text to manage how often it should repeat
+  - name: cycle
+    type: string
+    description: Specify the source of the work cycle. Set this to ensure an entire development cycle
+      is performed for the requirement (can be null or a new numeric or text value)
+  - name: campaign_id
+    type: string
+    description: Campaign UUID to link requirement
+  - name: metadata
+    type: object
+    description: Additional metadata (json object)
+  - name: site_id
+    type: string
+    description: Filter by site UUID
+  - name: user_id
+    type: string
+    description: Filter by user UUID
+  - name: search
+    type: string
+    description: Text search in title/description
+  - name: created_at_from
+    type: string
+    description: Filter requirements created on or after this date (ISO 8601 format)
+  - name: created_at_to
+    type: string
+    description: Filter requirements created on or before this date (ISO 8601 format)
+  - name: updated_at_from
+    type: string
+    description: Filter requirements updated on or after this date (ISO 8601 format)
+  - name: updated_at_to
+    type: string
+    description: Filter requirements updated on or before this date (ISO 8601 format)
+  - name: excluded_statuses
+    type: array
+    description: Exclude requirements with these statuses
+  - name: excluded_completion_statuses
+    type: array
+    description: Exclude requirements with these completion statuses
+  - name: sort_by
+    type: string
+    description: Field to sort by
+  - name: sort_order
+    type: string
+    description: 'Sort order. Enum: asc, desc'
+  - name: limit
+    type: number
+    description: Max results (default 50)
+  - name: offset
+    type: number
+    description: Pagination offset
+- name: reservation_schedules
+  description: Manage reservation schedules for catalog items. A catalog item must have is_reservation
+    = true before you can create a schedule for it. Use action="upsert" to configure a schedule (requires
+    catalog_item_id , timezone , and days ). Use action="list" or action="get" to read schedules.
+  docs: https://docs.makinari.com/mcp-server/tools/reservation_schedules
+  input_schema:
+  - name: action
+    type: string
+    description: 'Action to perform: list, get, upsert, delete'
+  - name: id
+    type: string
+    description: Schedule UUID (optional for get/delete if catalog_item_id is provided)
+  - name: catalog_item_id
+    type: string
+    description: The reservable catalog item UUID (required for upsert)
+  - name: site_id
+    type: string
+    description: Seller site UUID (defaults to current site)
+  - name: duration_minutes
+    type: number
+    description: Length of a single slot in minutes (default 60)
+  - name: capacity
+    type: number
+    description: Maximum seats per slot (default 1)
+  - name: timezone
+    type: string
+    description: Timezone for the schedule (e.g. America/Mexico_City)
+  - name: days
+    type: string
+    description: 'JSON string for weekly windows. e.g. {"monday": {"enabled": true, "start": "09:00",
+      "end": "17:00"}}'
+  - name: limit
+    type: number
+    description: Limit results for list
+  - name: offset
+    type: number
+    description: Offset results for list
+- name: reservations
+  description: Manage capacity reservations and find available slots for reservable items. Note that normal
+    checkout flows typically create pending reservations automatically when a user buys a slot. This tool
+    allows for querying inventory or creating admin bookings. Use action="get_available_slots" to query
+    inventory for a date range (requires catalog_item_id , from_date , to_date ). Use action="create"
+    for manual admin bookings (requires catalog_item_id , lead_id , start_time , end_time , and quantity
+    ). Use action="update" to change a reservation status (e.g. to cancelled ).
+  docs: https://docs.makinari.com/mcp-server/tools/reservations
+  input_schema:
+  - name: action
+    type: string
+    description: 'Action to perform: list, get, get_available_slots, create, update'
+  - name: id
+    type: string
+    description: Reservation UUID (required for get, update)
+  - name: site_id
+    type: string
+    description: Seller site UUID (defaults to current site)
+  - name: catalog_item_id
+    type: string
+    description: Catalog item UUID (required for create, get_available_slots)
+  - name: lead_id
+    type: string
+    description: Lead UUID attached to the reservation (required for create)
+  - name: from_date
+    type: string
+    description: Start date for slot query (ISO string, e.g. 2026-07-27)
+  - name: to_date
+    type: string
+    description: End date for slot query (ISO string)
+  - name: start_time
+    type: string
+    description: Start time of the reservation (ISO datetime string)
+  - name: end_time
+    type: string
+    description: End time of the reservation (ISO datetime string)
+  - name: quantity
+    type: number
+    description: Number of seats/capacity to reserve (default 1)
+  - name: status
+    type: string
+    description: Status (e.g. pending, confirmed, cancelled)
+  - name: limit
+    type: number
+    description: Limit results for list
+  - name: offset
+    type: number
+    description: Offset results for list
+- name: sales
+  description: Manage sales transactions. Use action="create" to record a new sale. Use action="update"
+    to modify a sale record. Use action="list" to search sales history. Use action="delete" to remove
+    a sale record.
+  docs: https://docs.makinari.com/mcp-server/tools/sales
+  input_schema:
+  - name: action
+    type: string
+    description: 'Action to perform on sales. Enum: create, list, update, delete'
+  - name: customer_id
+    type: string
+    description: Customer UUID
+  - name: sale_id
+    type: string
+    description: Sale UUID (required for update/delete)
+  - name: product_ids
+    type: array
+    description: Array of product UUIDs
+  - name: payment_method
+    type: string
+    description: Payment method (e.g. card, transfer)
+  - name: total_amount
+    type: number
+    description: Total amount
+  - name: status
+    type: string
+    description: completed, pending, cancelled, etc.
+  - name: notes
+    type: string
+    description: Sales notes
+  - name: discount
+    type: number
+    description: Discount amount
+  - name: tax
+    type: number
+    description: Tax amount
+  - name: shipping_address
+    type: object
+    description: Shipping address
+  - name: site_id
+    type: string
+    description: Site UUID
+  - name: limit
+    type: number
+    description: Limit results
+  - name: offset
+    type: number
+    description: Offset results
+- name: salesOrder
+  description: Manage sales orders. Use action="create" to create a sales record and optionally an order.
+    Use action="update" to update an order. Use action="list" to search orders. Use action="delete" to
+    remove an order.
+  docs: https://docs.makinari.com/mcp-server/tools/salesOrder
+  input_schema:
+  - name: action
+    type: string
+    description: 'Action to perform on sales orders. Enum: create, list, update, delete'
+  - name: customer_id
+    type: string
+    description: Customer UUID
+  - name: order_id
+    type: string
+    description: Order UUID (required for update/delete)
+  - name: product_ids
+    type: array
+    description: Array of product UUIDs (for create)
+  - name: payment_method
+    type: string
+    description: Payment method (e.g. card, transfer)
+  - name: total_amount
+    type: number
+    description: Total amount
+  - name: create_order
+    type: boolean
+    description: Create full order record
+  - name: status
+    type: string
+    description: pending, completed, etc.
+  - name: notes
+    type: string
+    description: Order notes
+  - name: discount
+    type: number
+    description: Discount amount
+  - name: tax
+    type: number
+    description: Tax amount
+  - name: shipping_address
+    type: object
+    description: Shipping address
+  - name: order_details
+    type: object
+    description: Additional order details
+  - name: delivery_date
+    type: string
+    description: Delivery date (for update)
+  - name: shipping_method
+    type: string
+    description: Shipping method (for update)
+  - name: priority
+    type: string
+    description: 'Priority: low, medium, high (for update)'
+  - name: sale_id
+    type: string
+    description: Sale UUID (for list)
+  - name: site_id
+    type: string
+    description: Site UUID (for list)
+  - name: limit
+    type: number
+    description: Limit results
+  - name: offset
+    type: number
+    description: Offset results
+- name: scheduling
+  description: Manage scheduling. Use action="check_availability" to get available slots (requires date,
+    duration, timezone, team_id). Use action="schedule" to schedule an appointment (requires title, start_datetime,
+    duration, timezone, context_id).
+  docs: https://docs.makinari.com/mcp-server/tools/scheduling
+  input_schema:
+  - name: action
+    type: string
+    description: 'Action to perform: check_availability or schedule. Enum: check_availability, schedule'
+  - name: date
+    type: string
+    description: Date in YYYY-MM-DD format
+  - name: duration
+    type: number
+    description: Meeting duration in minutes (min 15 for check, min 5 for schedule)
+  - name: timezone
+    type: string
+    description: Timezone (e.g. America/New_York)
+  - name: team_id
+    type: string
+    description: Team UUID (required for check_availability)
+  - name: start_time
+    type: string
+    description: Day start time (default 09:00)
+  - name: end_time
+    type: string
+    description: Day end time (default 17:00)
+  - name: participants
+    type: array
+    description: Participant IDs to check availability
+  - name: resources
+    type: array
+    description: Resource IDs
+  - name: title
+    type: string
+    description: Appointment title
+  - name: start_datetime
+    type: string
+    description: Start datetime ISO 8601
+  - name: context_id
+    type: string
+    description: Context ID (lead_id, site_id, or similar)
+  - name: location
+    type: string
+    description: Location
+  - name: description
+    type: string
+    description: Description
+  - name: reminder
+    type: number
+    description: Reminder minutes before
+- name: searchRegionVenues
+  description: Search for local venues, businesses, or places in a specific region using Google Maps.
+    Useful for finding leads, competitors, or specific types of businesses in a city/region.
+  docs: https://docs.makinari.com/mcp-server/tools/searchRegionVenues
+  input_schema:
+  - name: searchTerm
+    type: string
+    description: The search term (e.g., "Italian restaurants", "Gyms", "Software companies").
+  - name: city
+    type: string
+    description: The city to search in.
+  - name: region
+    type: string
+    description: The region, state, or province.
+  - name: country
+    type: string
+    description: The country (optional but recommended for accuracy).
+  - name: limit
+    type: number
+    description: 'Maximum number of results to return (default: 5).'
+  - name: excludeNames
+    type: array
+    description: List of venue names to exclude from results.
+- name: segments
+  description: Manage audience segments. Use action="create" to create a new segment (requires name).
+    Use action="update" to update an existing segment (requires segment_id). Use action="list" to get
+    segments with filters.
+  docs: https://docs.makinari.com/mcp-server/tools/segments
+  input_schema:
+  - name: action
+    type: string
+    description: 'Action to perform on segments. Enum: create, list, update'
+  - name: segment_id
+    type: string
+    description: Segment UUID (required for update)
+  - name: description
+    type: string
+    description: Description
   - name: audience
-    description: Build and manage reusable lead audiences for bulk messaging or analysis.
-  - name: sendBulkMessages
-    description: Send a message to all leads in an audience via WhatsApp or email.
-  - name: publish
-    description: Consolidated tool to create content, publish to social media, and send to an audience.
-  - name: audioToText
-    description: Transcribe audio to text (documented tool page).
-  - name: extractFrames
-    description: Extract frames from video (documented tool page).
-  - name: systemNotification
-    description: System notifications (documented tool page).
-  - name: deals
-    description: Manage deals (documented tool page).
+    type: string
+    description: Target audience category (e.g. professional, tech)
+  - name: size
+    type: number
+    description: Estimated audience size
+  - name: estimated_value
+    type: number
+    description: Estimated value
+  - name: language
+    type: string
+    description: Language code (e.g. en)
+  - name: is_active
+    type: boolean
+    description: Is segment active?
+  - name: attributes
+    type: object
+    description: Additional attributes
+  - name: site_id
+    type: string
+    description: Filter by site UUID
+  - name: user_id
+    type: string
+    description: Filter by user UUID
+  - name: limit
+    type: number
+    description: Max results
+  - name: offset
+    type: number
+    description: Pagination offset
+- name: sendBulkMessages
+  description: Send a message to every lead in a stored audience via WhatsApp or email. The tool iterates
+    through all pages of the audience, sends the message to each lead, and tracks individual delivery
+    status. Leads missing the required contact field (phone for WhatsApp, email for email) are automatically
+    skipped. Already-sent leads are not re-sent, so the tool is safe to retry.
+  docs: https://docs.makinari.com/mcp-server/tools/sendBulkMessages
+  input_schema:
+  - name: audience_id
+    type: string
+    description: 'Yes'
+  - name: channel
+    type: string
+    description: 'Yes'
+  - name: message
+    type: string
+    description: 'Yes'
+  - name: subject
+    type: string
+    description: email
+  - name: from
+    type: string
+    description: 'No'
+  - name: audience_email_mode
+    type: string
+    description: 'No'
+  - name: content_id
+    type: string
+    description: 'No'
+  - name: placeholder_policy
+    type: string
+    description: 'No'
+- name: sendEmail
+  description: 'Send an email to a recipient. Required: email (recipient), subject, message. Optional:
+    from, lead_id, conversation_id, agent_id, placeholder_policy. Merge fields (with lead_id ): {{lead.name}}
+    , {{lead.first_name}} , {{lead.email}} , {{lead.phone}} , {{lead.position}} , {{lead.company}} , {{lead.notes}}
+    , {{lead.metadata.<path>}} , {{site.name}} . Use double braces only; aliases like {{lead.correo}}
+    are normalized. Unknown tokens: strip_tokens (default) removes them; skip_recipient aborts the send
+    if unresolved tokens remain.'
+  docs: https://docs.makinari.com/mcp-server/tools/sendEmail
+  input_schema:
+  - name: email
+    type: string
+    description: Recipient email address
+  - name: subject
+    type: string
+    description: Email subject (may include merge fields if lead_id is set)
+  - name: message
+    type: string
+    description: Email body (HTML or plain text)
+  - name: from
+    type: string
+    description: Sender display name
+  - name: lead_id
+    type: string
+    description: Lead UUID for tracking and merge fields
+  - name: conversation_id
+    type: string
+    description: Conversation UUID for tracking
+  - name: agent_id
+    type: string
+    description: Agent UUID for tracking
+  - name: placeholder_policy
+    type: string
+    description: strip_tokens or skip_recipient when using merge fields
+- name: sendWhatsApp
+  description: 'Send WhatsApp Send a WhatsApp message to a phone number. Required: phone_number, message.
+    Optional: from, lead_id (enables merge fields in message ), placeholder_policy, conversation_id, agent_id,
+    media_urls. If template_required: true (outside 24h), use whatsappTemplate. With lead_id , merge tokens:
+    {{lead.name}} , {{lead.first_name}} , {{lead.email}} , {{lead.phone}} , {{lead.position}} , {{lead.company}}
+    , {{lead.notes}} , {{lead.metadata.<path>}} , {{site.name}} (double braces only).'
+  docs: https://docs.makinari.com/mcp-server/tools/sendWhatsApp
+  input_schema:
+  - name: phone_number
+    type: string
+    description: Recipient phone in international format (e.g. +1234567890, no spaces)
+  - name: message
+    type: string
+    description: Message text (merge fields when lead_id is set)
+  - name: from
+    type: string
+    description: Sender display name
+  - name: lead_id
+    type: string
+    description: Lead UUID for tracking and merge fields
+  - name: conversation_id
+    type: string
+    description: Conversation UUID (used for 24h window check)
+  - name: agent_id
+    type: string
+    description: Agent UUID for tracking
+  - name: responseWindowEnabled
+    type: boolean
+    description: If true, skip template check and send as within 24h window
+  - name: placeholder_policy
+    type: string
+    description: strip_tokens or skip_recipient for unknown {{...}} tokens
+- name: subscription_plan_items
+  description: Manage mappings between a subscription plan and its included digital assets. Use action="create"
+    to map a digital asset to a plan. Use action="list" to read existing mappings. Use action="delete"
+    to remove a mapping.
+  docs: https://docs.makinari.com/mcp-server/tools/subscription_plan_items
+  input_schema:
+  - name: action
+    type: string
+    description: 'Action to perform: list, create, delete'
+  - name: id
+    type: string
+    description: Item UUID (required for delete)
+  - name: site_id
+    type: string
+    description: Seller site UUID
+  - name: plan_catalog_item_id
+    type: string
+    description: The plan catalog item UUID
+  - name: digital_catalog_item_id
+    type: string
+    description: The digital catalog item UUID included in the plan
+  - name: limit
+    type: number
+    description: Limit results for list
+  - name: offset
+    type: number
+    description: Offset results for list
+- name: systemNotification
+  description: 'The system_notification tool allows you to list team members or send notifications to
+    them. The tool supports two actions: list : Retrieves all team members for the site, helping you determine
+    who to notify and providing their email addresses. notify : Sends a notification to a specific team
+    member. Note: Notifications are rate-limited to 1 per instance per team member per hour. You can specify
+    the channels to use (e.g., ["whatsapp", "email", "in_app"] ) and a custom phone_number . If no explicit
+    channels are prov'
+  docs: https://docs.makinari.com/mcp-server/tools/systemNotification
+  input_schema:
+  - name: action
+    type: string
+    description: 'Yes'
+  - name: team_member_email
+    type: string
+    description: Yes*
+  - name: instance_id
+    type: string
+    description: 'No'
+  - name: title
+    type: string
+    description: Yes*
+  - name: message
+    type: string
+    description: Yes*
+  - name: channels
+    type: array of strings
+    description: 'No'
+  - name: phone_number
+    type: string
+    description: 'No'
+- name: tasks
+  description: Manage tasks. Use action="create" to create a new task (requires title, type, lead_id).
+    Use action="update" to update an existing task (requires task_id). Use action="list" to get tasks
+    with filters.
+  docs: https://docs.makinari.com/mcp-server/tools/tasks
+  input_schema:
+  - name: action
+    type: string
+    description: 'Action to perform on tasks. Enum: create, list, update'
+  - name: task_id
+    type: string
+    description: Task UUID (required for update)
+  - name: title
+    type: string
+    description: Task title (required for create)
+  - name: type
+    type: string
+    description: 'Task type: website_visit, demo, meeting, email, call, quote, contract, payment, referral,
+      feedback (required for create)'
+  - name: lead_id
+    type: string
+    description: Lead UUID (required for create)
+  - name: description
+    type: string
+    description: Task description
+  - name: status
+    type: string
+    description: pending, in_progress, completed, failed
+  - name: stage
+    type: string
+    description: Task stage in pipeline
+  - name: priority
+    type: number
+    description: Priority 0-10
+  - name: scheduled_date
+    type: string
+    description: ISO 8601 datetime
+  - name: completed_date
+    type: string
+    description: ISO 8601 when completed
+  - name: amount
+    type: number
+    description: Monetary amount if applicable
+  - name: assignee
+    type: string
+    description: Assignee user UUID
+  - name: notes
+    type: string
+    description: Additional notes
+  - name: conversation_id
+    type: string
+    description: Conversation UUID
+  - name: address
+    type: object
+    description: Address/location data
+  - name: user_id
+    type: string
+    description: Filter by user UUID
+  - name: site_id
+    type: string
+    description: Filter by site UUID
+  - name: visitor_id
+    type: string
+    description: Filter by visitor UUID
+  - name: scheduled_date_from
+    type: string
+    description: ISO 8601 start
+  - name: scheduled_date_to
+    type: string
+    description: ISO 8601 end
+  - name: search
+    type: string
+    description: Text search
+  - name: limit
+    type: number
+    description: Max results (default 50)
+  - name: offset
+    type: number
+    description: Pagination offset
+- name: updateSiteSettings
+  description: Site Settings Get or update the site business settings, context (about, industry, etc.),
+    and copywriting guidelines (branding, voice, tone). Use "get" action to retrieve current settings,
+    and "update" action to modify them. Provide only the fields you want to update when using the "update"
+    action.
+  docs: https://docs.makinari.com/mcp-server/tools/updateSiteSettings
+  input_schema:
+  - name: action
+    type: string
+    description: 'REQUIRED. The action to perform: "get" to retrieve settings, "update" to modify them.'
+  - name: about
+    type: string
+    description: A comprehensive description of the company, its mission, and what it does. This serves
+      as the primary context for the AI.
+  - name: company_size
+    type: string
+    description: The size of the company (e.g., "1-10", "11-50", "Enterprise").
+  - name: industry
+    type: string
+    description: The primary industry the company operates in.
+  - name: branding
+    type: object
+    description: Brand identity, voice, tone, and guidelines. Includes brand_pyramid, brand_archetype,
+      color_palette, typography, voice_and_tone (communication_style, personality_traits, forbidden_words,
+      preferred_phrases), brand_guidelines (do_list, dont_list), and brand_assets.
+  - name: customer_journey
+    type: object
+    description: Configuration for customer journey stages (awareness, consideration, decision, purchase,
+      retention, referral). Each stage contains metrics, actions, and tactics.
+  - name: products
+    type: array
+    description: List of products offered by the company.
+  - name: services
+    type: array
+    description: List of services offered by the company.
+  - name: swot
+    type: object
+    description: SWOT analysis (strengths, weaknesses, opportunities, threats).
+  - name: locations
+    type: array
+    description: Physical locations of the business.
+  - name: marketing_budget
+    type: object
+    description: Marketing budget allocation and tracking.
+  - name: marketing_channels
+    type: array
+    description: Configuration and performance of marketing channels.
+  - name: social_media
+    type: array
+    description: Social media profiles and settings.
+  - name: team_members
+    type: array
+    description: Team members and their roles.
+  - name: team_roles
+    type: array
+    description: Definitions of team roles and permissions.
+  - name: org_structure
+    type: object
+    description: Organizational structure and hierarchy.
+  - name: competitors
+    type: array
+    description: List of competitors and analysis.
+  - name: goals
+    type: object
+    description: Business goals (quarterly, yearly, etc.).
+  - name: channels
+    type: object
+    description: Communication channel configurations (email, whatsapp, etc.).
+  - name: business_hours
+    type: object
+    description: Company business hours.
+  - name: press_releases
+    type: array
+    description: Company press releases and news.
+  - name: partnerships
+    type: array
+    description: Company partnerships and alliances.
+  - name: competitor_info
+    type: object
+    description: Detailed competitive intelligence.
+  - name: diversity_info
+    type: object
+    description: Diversity and inclusion information.
+  - name: office_locations
+    type: array
+    description: Detailed office location information.
+- name: urlToMarkdown
+  description: Converts the content of a webpage URL into Markdown format. Useful for extracting text
+    content for analysis.
+  docs: https://docs.makinari.com/mcp-server/tools/urlToMarkdown
+  input_schema:
+  - name: url
+    type: string
+    description: The URL of the webpage to convert to Markdown
+- name: urlToSitemap
+  description: Extracts the sitemap of a website to discover its structure and page URLs. Useful for navigation
+    and understanding site layout.
+  docs: https://docs.makinari.com/mcp-server/tools/urlToSitemap
+  input_schema:
+  - name: url
+    type: string
+    description: The URL of the website to extract the sitemap from
+- name: webSearch
+  description: Perform a web search to get real-time information. Powered by Tavily. Returns an AI-generated
+    answer plus individual result snippets.
+  docs: https://docs.makinari.com/mcp-server/tools/webSearch
+  input_schema:
+  - name: query
+    type: string
+    description: The search query to perform.
+  - name: search_depth
+    type: string
+    description: 'Depth of the search. Enum: basic, advanced. Default: basic.'
+  - name: max_results
+    type: number
+    description: 'Max number of results to return (1–20). Default: 5.'
+  - name: include_answer
+    type: boolean
+    description: 'Include an AI-generated answer summarizing the results. Default: true.'
+  - name: include_images
+    type: boolean
+    description: 'Include image results. Default: false.'
+  - name: include_domains
+    type: array
+    description: Restrict results to these domains (e.g. ["wikipedia.org"]).
+  - name: exclude_domains
+    type: array
+    description: Exclude results from these domains.
+- name: webhooks
+  description: Manage webhooks. Use action="list" to get all webhooks. Use action="create" with url and
+    events (array of strings) to register a new webhook.
+  docs: https://docs.makinari.com/mcp-server/tools/webhooks
+  input_schema:
+  - name: action
+    type: string
+    description: 'Action to perform: "list" to get webhooks, "create" to register a new one. Enum: list,
+      create'
+  - name: url
+    type: string
+    description: The URL for the webhook (required for create action).
+  - name: events
+    type: array
+    description: List of events to subscribe to (required for create action).
+- name: whatsappTemplate
+  description: 'WhatsApp templates are required when sending to a user more than 24 hours after their
+    last message. Use action create_template first (phone_number, message); if it returns template_id,
+    then use action send_template (template_id, phone_number, original_message) to deliver the message.
+    If create_template returns template_required: false, the conversation is within the 24h window - use
+    sendWhatsApp instead.'
+  docs: https://docs.makinari.com/mcp-server/tools/whatsappTemplate
+  input_schema:
+  - name: action
+    type: string
+    description: 'create_template: check 24h window and create or find template, returns template_id when
+      needed. send_template: send a message using an existing template_id. Enum: create_template, send_template'
+  - name: phone_number
+    type: string
+    description: Recipient phone in international format (required for both actions)
+  - name: message
+    type: string
+    description: Message content (required for create_template; used as template body)
+  - name: template_id
+    type: string
+    description: Template SID from create_template result (required for send_template)
+  - name: conversation_id
+    type: string
+    description: Conversation UUID for 24h window check (optional for create_template)
+  - name: from
+    type: string
+    description: Sender name (optional)
+  - name: original_message
+    type: string
+    description: Original message text for logging (optional for send_template)
+- name: workflows
+  description: Execute business and data workflows. Use this tool to trigger complex backend processes
+    like lead research, campaign building, content generation, sending emails/whatsapp, etc.
+  docs: https://docs.makinari.com/mcp-server/tools/workflows
+  input_schema:
+  - name: action
+    type: string
+    description: 'The workflow action to execute. Enum: idealClientProfileMining, buildCampaigns, buildContent,
+      buildSegments, buildSegmentsICP, leadFollowUp, leadResearch, enrichLead, leadGeneration, analyzeSite,
+      assignLeads, leadInvalidation, dailyProspection, leadQualification, dailyStrategicAccounts, sendEmailFromAgent,
+      sendWhatsappFromAgent, scheduleCustomerSupport, answerWhatsappMessage, dailyStandUp, customerSupportMessage,
+      agentMessage, startRobot, promptRobot, stopRobot'
+  - name: payload
+    type: object
+    description: The parameters for the workflow. Must include site_id (automatically injected if not
+      provided) and other specific fields depending on the action.

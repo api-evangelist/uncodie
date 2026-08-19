@@ -1,0 +1,39 @@
+generated: '2026-08-13'
+method: searched
+source: https://docs.makinari.com/rest-api
+limit_count: 0
+notes: >-
+  Makinari documents that a 429 "Rate limit exceeded" response exists, but
+  publishes NO numeric limits, no windows, and no rate-limit response headers
+  on any surface — REST API, Agents API, Workflows, Content API or the MCP
+  server. An agent therefore cannot pace itself from the documentation; it can
+  only react after exhaustion. The pricing page instead governs consumption
+  through a credit/usage model (20/100/500 credits per month by tier, plus
+  metered per-call charges), which is a billing quota rather than a request
+  rate limit — that is recorded in plans/uncodie-plans-pricing.yml.
+  The marketing page for agent workloads claims "Budget and rate limiters" as
+  an enterprise governance feature, but no limits are documented.
+  The only rate-limit engineering the company publishes is
+  docs/RATE_LIMIT_ERROR_HANDLING.md in the open-source API repo, and that
+  describes how Makinari's agent processor handles 429s it receives FROM its
+  upstream LLM providers (60s wait, then exponential backoff) — it is not a
+  statement of Makinari's own limits for its API consumers.
+limits: []
+exhaustion:
+  status: 429
+  body: '{ "message": "Rate limit exceeded" }'
+  source: https://docs.makinari.com/rest-api
+response_headers: []
+retry_guidance:
+  documented: false
+  notes: No Retry-After, RateLimit-* or X-RateLimit-* headers are documented.
+evidence:
+  - url: https://docs.makinari.com/rest-api
+    status: 200
+    note: Response-format section lists 429 "Rate limit exceeded" with no numbers.
+  - url: https://www.makinari.com/product/pricing
+    status: 200
+    note: Credit quotas per tier; metered usage pricing; no request rate limits.
+  - url: https://raw.githubusercontent.com/Uncodier/API/main/docs/RATE_LIMIT_ERROR_HANDLING.md
+    status: 200
+    note: Internal handling of upstream LLM 429s, not a consumer-facing limit.

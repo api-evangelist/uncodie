@@ -1,19 +1,23 @@
-generated: '2026-07-21'
-method: searched
+generated: '2026-08-13'
+method: probed
+source: live HTTP probes of every Makinari/Uncodie host
+checked: '2026-08-13'
+result: no-documents
 notes: >-
-  Probed the /.well-known/ discovery surface on every Makinari/Uncodie host
-  found in the docs and website on 2026-07-21. No document returned 200; the
-  documented API hosts api.makinari.io and api.makinari.com do not resolve in
-  DNS. Statuses recorded verbatim (307s are app-level redirects, not
-  well-known documents).
+  Re-probed the /.well-known/ discovery surface on every Makinari/Uncodie host
+  on 2026-08-13, including the newly-found open-source hub makinari.org and the
+  A2A agent-card paths. NOT ONE PATH RETURNS A DOCUMENT. Statuses are recorded
+  verbatim without following redirects: 307s are app-level redirects (apex ->
+  www, or app.makinari.com -> /auth login), not well-known documents.
+  Because every probe misses, this file records an ABSENCE and no `WellKnown`
+  or `SecurityTxt` pointer is emitted in apis.yml — the round-1 pass wired a
+  `WellKnown` pointer over this same all-404 result and that pointer has been
+  removed. There is nothing here for an agent to discover: no security.txt, no
+  OpenID/OAuth metadata, no api-catalog, no ai-plugin, no agent card.
+  The two 200s in the agent-card probe are the SPA catch-all false positive:
+  www.uncodie.com redirects to www.makinari.com, whose Next.js app answers the
+  redirected request with an HTML page, not JSON. Rejected as documents.
 hosts:
-  - host: https://makinari.com
-    documents:
-      - { path: /.well-known/security.txt, status: 307 }
-      - { path: /.well-known/openid-configuration, status: 307 }
-      - { path: /.well-known/oauth-authorization-server, status: 307 }
-      - { path: /.well-known/api-catalog, status: 307 }
-      - { path: /.well-known/ai-plugin.json, status: 307 }
   - host: https://www.makinari.com
     documents:
       - { path: /.well-known/security.txt, status: 404 }
@@ -21,6 +25,18 @@ hosts:
       - { path: /.well-known/oauth-authorization-server, status: 404 }
       - { path: /.well-known/api-catalog, status: 404 }
       - { path: /.well-known/ai-plugin.json, status: 404 }
+      - { path: /.well-known/agent-card.json, status: 404 }
+      - { path: /.well-known/agent.json, status: 404 }
+  - host: https://makinari.com
+    notes: Apex 307-redirects to www for every path.
+    documents:
+      - { path: /.well-known/security.txt, status: 307 }
+      - { path: /.well-known/openid-configuration, status: 307 }
+      - { path: /.well-known/oauth-authorization-server, status: 307 }
+      - { path: /.well-known/api-catalog, status: 307 }
+      - { path: /.well-known/ai-plugin.json, status: 307 }
+      - { path: /.well-known/agent-card.json, status: 404, notes: 'after redirect to www' }
+      - { path: /.well-known/agent.json, status: 404, notes: 'after redirect to www' }
   - host: https://docs.makinari.com
     documents:
       - { path: /.well-known/security.txt, status: 404 }
@@ -28,6 +44,8 @@ hosts:
       - { path: /.well-known/oauth-authorization-server, status: 404 }
       - { path: /.well-known/api-catalog, status: 404 }
       - { path: /.well-known/ai-plugin.json, status: 404 }
+      - { path: /.well-known/agent-card.json, status: 404 }
+      - { path: /.well-known/agent.json, status: 404 }
   - host: https://app.makinari.com
     documents:
       - { path: /.well-known/security.txt, status: 404 }
@@ -35,31 +53,42 @@ hosts:
       - { path: /.well-known/oauth-authorization-server, status: 307, notes: 'redirects to /auth login' }
       - { path: /.well-known/api-catalog, status: 307, notes: 'redirects to /auth login' }
       - { path: /.well-known/ai-plugin.json, status: 404 }
+      - { path: /.well-known/agent-card.json, status: 404 }
+      - { path: /.well-known/agent.json, status: 404 }
   - host: https://backend.makinari.com
+    notes: >-
+      The API + hosted MCP host. Both MCP OAuth discovery documents are absent,
+      consistent with the server's own README: MCP uses the same API keys as
+      the rest of the API, with no OAuth flow.
     documents:
       - { path: /.well-known/security.txt, status: 404 }
       - { path: /.well-known/openid-configuration, status: 404 }
       - { path: /.well-known/oauth-authorization-server, status: 404 }
+      - { path: /.well-known/oauth-protected-resource, status: 404 }
+      - { path: /.well-known/oauth-authorization-server/api/mcp, status: 404 }
+      - { path: /.well-known/oauth-protected-resource/api/mcp, status: 404 }
       - { path: /.well-known/api-catalog, status: 404 }
       - { path: /.well-known/ai-plugin.json, status: 404 }
+      - { path: /.well-known/agent-card.json, status: 404 }
+      - { path: /.well-known/agent.json, status: 404 }
+  - host: https://makinari.org
+    notes: Open-source hub found this round; 307-redirects every well-known path.
+    documents:
+      - { path: /.well-known/security.txt, status: 307 }
+      - { path: /.well-known/openid-configuration, status: 307 }
+      - { path: /.well-known/oauth-authorization-server, status: 307 }
+      - { path: /.well-known/api-catalog, status: 307 }
+      - { path: /.well-known/ai-plugin.json, status: 307 }
+  - host: https://www.uncodie.com
+    notes: >-
+      Legacy domain; 302-redirects to www.makinari.com. The 200s below are the
+      redirected Next.js HTML page, NOT a document — rejected.
+    documents:
+      - { path: /.well-known/agent-card.json, status: 200, content_type: text/html, accepted: false }
+      - { path: /.well-known/agent.json, status: 200, content_type: text/html, accepted: false }
   - host: https://api.makinari.io
     documents: []
-    notes: DNS does not resolve (documented base URL host).
+    notes: DNS does not resolve (the documented REST base-URL host).
   - host: https://api.makinari.com
     documents: []
-    notes: DNS does not resolve (documented Requirements API host).
-  - host: https://uncodie.com
-    documents:
-      - { path: /.well-known/security.txt, status: 404 }
-      - { path: /.well-known/openid-configuration, status: 404 }
-      - { path: /.well-known/oauth-authorization-server, status: 404 }
-      - { path: /.well-known/api-catalog, status: 404 }
-      - { path: /.well-known/ai-plugin.json, status: 404 }
-    notes: Apex serves a Framer "Site Not Found" 404; www.uncodie.com 302-redirects to www.makinari.com.
-  - host: https://files.uncodie.com
-    documents:
-      - { path: /.well-known/security.txt, status: 404 }
-      - { path: /.well-known/openid-configuration, status: 404 }
-      - { path: /.well-known/oauth-authorization-server, status: 404 }
-      - { path: /.well-known/api-catalog, status: 404 }
-      - { path: /.well-known/ai-plugin.json, status: 404 }
+    notes: DNS does not resolve (the documented Requirements API host).

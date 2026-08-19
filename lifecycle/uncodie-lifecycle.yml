@@ -1,4 +1,4 @@
-generated: '2026-07-21'
+generated: '2026-08-13'
 method: searched
 source: https://docs.makinari.com/rest-api
 versioning:
@@ -6,28 +6,71 @@ versioning:
   current: v1
   docs: https://docs.makinari.com/rest-api
   notes: >-
-    All endpoints are versioned; the current stable version is v1. The docs
-    quote the base URL as https://api.makinari.io/v1 (Requirements pages use
-    https://api.makinari.com/v1), but as of 2026-07-21 neither api.makinari.io
-    nor api.makinari.com resolves in DNS; the live application host serving
-    /api/* routes (including the hosted MCP server) is
-    https://backend.makinari.com.
+    All REST endpoints are versioned; the current stable version is v1. The
+    documentation quotes the base URL as https://api.makinari.io/v1, but that
+    host has not resolved in DNS on any pass (2026-07-21 and 2026-08-13); the
+    live application host serving the /api/* routes — including the hosted MCP
+    server — is https://backend.makinari.com. The Agents, Workflows and Content
+    APIs are documented as unversioned /api/... paths on the same host, so the
+    v1 prefix is not applied uniformly across the platform.
+product_releases:
+  scheme: semver
+  current: 1.5.0
+  latest_date: '2026-03'
+  docs: https://www.makinari.com/product/changelog
+  artifact: changelog/uncodie-changelog.yml
+  notes: >-
+    Product releases are versioned separately from the API (v1.1.0 through
+    v1.5.0, each with a permalink page). No product release has been published
+    since March 2026.
 deprecation:
   policy_url: null
   sunset_header: false
-  notes: No published deprecation policy or RFC 8594 Sunset-header support found.
+  notes: >-
+    No published deprecation policy and no RFC 8594 Sunset/Deprecation header
+    support found on any surface. No endpoint is marked deprecated in the docs.
 status_page:
   url: https://docs.makinari.com/status
   json_api: https://docs.makinari.com/api/status
   systems_api: https://docs.makinari.com/api/status/systems
+  machine_readable: true
   notes: >-
-    Live status page reporting per-system health (AI services, databases,
-    Public API, Agents API, Workflow API, Visitors/Finder/Robots APIs, cron
-    jobs, notifications) with 24h/7d/30d SLA uptime and 90-day history,
-    refreshed by an hourly cron. Verified live 2026-07-21 (overall status
-    "down", 24h SLA 66.7% at time of probe).
+    A genuinely good status surface: per-system health for 21 systems (Agents
+    API, Public API, Workflow API, Visitors/Finder/Robots/Site/Platform APIs,
+    databases, cron, integrations, notifications, and the AI text/image/audio/
+    video/Portkey providers) with 24h/7d/30d SLA uptime, 90-day history, an
+    hourly cron refresh, and a JSON endpoint an agent can poll.
+  probe:
+    checked: '2026-08-13T18:01Z'
+    endpoint: https://docs.makinari.com/api/status
+    http_status: 503
+    overall: down
+    overall_sla_24h: 66.7
+    last_run_at: '2026-08-13T18:01:20Z'
+    systems_down:
+      - Agents API (agents routes failing; 24h and 30d uptime 0)
+      - AI Text, AI Image, AI Video, AI Text Continuation, AI Portkey
+    systems_degraded:
+      - API Authentication (auth probe inconclusive)
+    systems_up:
+      - Public API, Platform API, Site API, Visitors API, Finder API, Robots API
+      - Workflow API, Main Database, Apps Database, Cron Jobs, Integrations
+      - Notifications, Core Environment
+    notes: >-
+      The same overall state ("down", 24h SLA 66.7%) was observed on
+      2026-07-21 and again on 2026-08-13, with the AI provider systems and the
+      Agents API reporting 0% uptime over both 24h and 30d windows. The core
+      REST surfaces (Public, Platform, Site, Visitors, Finder, Robots,
+      Workflow) report 100%. Recorded as measured; the status endpoint itself
+      answers HTTP 503 while overall status is down.
 sla:
   url: https://docs.makinari.com/status
   uptime_target: null
-  notes: SLA figures are reported per system on the status page; no contractual uptime target published.
+  contractual: false
+  notes: >-
+    Per-system SLA uptime is reported on the status page but no contractual
+    uptime target is published. The agent-facing marketing page
+    (https://www.makinari.com/resources/agents) advertises "Enterprise SLAs &
+    Governance" and "Guaranteed uptime & SLA", but no figure, credit schedule
+    or SLA document is published anywhere on the site.
 deprecated_operations: []

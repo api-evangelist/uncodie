@@ -1,0 +1,61 @@
+generated: '2026-08-13'
+method: generated
+source: >-
+  https://docs.makinari.com/mcp-server/tools,
+  https://docs.makinari.com/rest-api,
+  https://docs.makinari.com/first-steps/api-keys,
+  https://docs.makinari.com/workflows
+notes: >-
+  Four packaged Agent Skills for Makinari (formerly Uncodie), one per marquee
+  flow. Makinari publishes no OpenAPI, so skills are grounded in the two
+  contracts it DOES publish: the 56 MCP tool pages (each with a full input
+  schema) and the 139 documented REST/Agents/Workflows/Content endpoints
+  harvested from the reference on 2026-08-13. Every tool name, action,
+  parameter and path in these skills is transcribed from a provider page —
+  none is inferred. Where a rule is a Makinari rule (Finder IDs must be
+  resolved before mining, WhatsApp's 24-hour template requirement, quotation
+  totals recalculating themselves, entitlements not being invented) it is
+  called out, because those are the things an agent gets wrong first.
+  No provider-published skills or AGENTS.md were found on any Makinari host or
+  in the open-source repositories.
+skill_count: 4
+skills:
+  - name: uncodie-icp-to-qualified-leads
+    file: uncodie-icp-to-qualified-leads.md
+    surface: MCP
+    summary: >-
+      Resolve Finder filter IDs, size the ICP before spending, mine it into a
+      segment, then create and qualify leads.
+    operations: 6
+  - name: uncodie-audience-bulk-outreach
+    file: uncodie-audience-bulk-outreach.md
+    surface: MCP + REST
+    summary: >-
+      Freeze a lead audience and send merged email or WhatsApp to all of it,
+      including the WhatsApp 24-hour template fallback.
+    operations: 10
+  - name: uncodie-quote-to-cash
+    file: uncodie-quote-to-cash.md
+    surface: MCP only
+    summary: >-
+      Catalog item, quotation and line items, checkout order, Stripe payment
+      link, sales order, entitlement — the commerce cluster, which has no REST
+      equivalent at all.
+    operations: 8
+  - name: uncodie-keys-webhooks-workflows
+    file: uncodie-keys-webhooks-workflows.md
+    surface: REST + MCP
+    summary: >-
+      Provision and rotate scoped API keys, register webhooks so agents react
+      instead of polling, trigger Temporal workflows, and check the status API
+      before trusting a result.
+    operations: 12
+cross_references:
+  - authentication/uncodie-authentication.yml
+  - conventions/uncodie-conventions.yml
+  - errors/uncodie-problem-types.yml
+  - rate-limits/uncodie-rate-limits.yml
+  - plans/uncodie-plans-pricing.yml
+  - mcp/uncodie-mcp.yml
+  - mcp/uncodie-tool-crosswalk.yml
+  - data-model/uncodie-data-model.yml

@@ -1,0 +1,568 @@
+generated: '2026-08-13'
+method: derived
+source: >-
+  https://docs.makinari.com/mcp-server/tools (56 documented tool pages, each
+  publishing an "Input Schema" parameter table)
+notes: >-
+  Makinari publishes no OpenAPI document, so this entity graph is derived from
+  the only machine-shaped contract the company does publish: the input schemas
+  on its 56 MCP tool documentation pages. Each tool that manages a resource is
+  treated as one entity; every parameter whose name ends in `_id`/`_ids` is
+  treated as a reference edge to the entity that owns that identifier. Nothing
+  here is invented — every entity, field count and edge traces to a published
+  parameter on a page listed in `docs:`. Field types are UUID strings unless
+  the tool page says otherwise.
+  Two clusters dominate. The GTM/CRM core (site, user, lead, visitor, segment,
+  campaign, conversation, message, task, content, audience) is the original
+  product. A full commerce core (catalog_item, quotation + quotation_item,
+  sales_order, sale, purchase + purchase_item, entitlement,
+  subscription_plan_item, reservation + reservation_schedule, checkout) was
+  added since the round-1 pass and is what the ten new MCP tools expose.
+  `site_id` is the tenancy root: it appears on nearly every entity, so every
+  read and write is scoped to a site.
+tenancy:
+  root_entity: site
+  field: site_id
+  notes: >-
+    Almost every tool requires site_id; API keys are themselves issued per
+    site and user (POST /api/keys with site_id + user_id), so the site is the
+    isolation boundary for both data and credentials.
+entity_count: 32
+relationship_count: 95
+entities:
+- entity: appointment
+  managed_by_tool: scheduling
+  docs: https://docs.makinari.com/mcp-server/tools/scheduling
+  description: Manage scheduling. Use action="check_availability" to get available slots (requires date,
+    duration, timezone, team_id). Use action="schedule" to schedule an appointment (requires title, start_datetime,
+    duration, timezone
+  field_count: 15
+  relationships:
+  - type: belongs_to
+    entity: team
+    via: team_id
+  - type: belongs_to
+    entity: context
+    via: context_id
+- entity: asset
+  managed_by_tool: assets
+  docs: https://docs.makinari.com/mcp-server/tools/assets
+  description: Manage assets (e.g. text content, media metadata) linked to robot instances. Use action="create"
+    to create a new asset. Use action="update" to update an existing asset. Use action="list" to get assets.
+  field_count: 8
+  relationships:
+  - type: belongs_to
+    entity: instance
+    via: instance_id
+- entity: audience
+  managed_by_tool: audience
+  docs: https://docs.makinari.com/mcp-server/tools/audience
+  description: Build and manage reusable lead audiences. Query leads by filters, store the result as a
+    named audience, then retrieve pages of leads or pass the audience to sendBulkMessages for bulk delivery
+    (use {{lead.*}} merge tokens
+  field_count: 12
+  relationships:
+  - type: belongs_to
+    entity: segment
+    via: segment_id
+  - type: belongs_to
+    entity: campaign
+    via: campaign_id
+  - type: belongs_to
+    entity: user
+    via: assignee_id
+- entity: campaign
+  managed_by_tool: campaigns
+  docs: https://docs.makinari.com/mcp-server/tools/campaigns
+  description: Manage marketing campaigns. Use action="create" to create a new campaign (requires title).
+    Use action="update" to update an existing campaign (requires campaign_id). Use action="list" to get
+    campaigns with filters.
+  field_count: 14
+  relationships:
+  - type: belongs_to
+    entity: site
+    via: site_id
+  - type: belongs_to
+    entity: user
+    via: user_id
+- entity: catalog_item
+  managed_by_tool: catalog_commerce
+  docs: https://docs.makinari.com/mcp-server/tools/catalog_commerce
+  description: 'Create, search, and manage catalog items and product modifiers. Default resource="item"
+    : use action="create" to add a product/service/digital_asset (requires name ; set target_sale_price
+    and is_purchasable for sellable '
+  field_count: 31
+  relationships:
+  - type: belongs_to
+    entity: site
+    via: site_id
+  - type: belongs_to
+    entity: catalog_category
+    via: category_id
+  - type: belongs_to
+    entity: modifier_group
+    via: modifier_group_id
+- entity: checkout
+  managed_by_tool: checkout
+  docs: https://docs.makinari.com/mcp-server/tools/checkout
+  description: Manage checkouts. Use action="create_order" to create a pending sale_order with lines.
+    Use action="create_payment_link" to generate a Stripe Checkout URL for a pending order. Share this
+    URL with the buyer so they can pay
+  field_count: 10
+  relationships:
+  - type: belongs_to
+    entity: site
+    via: site_id
+  - type: belongs_to
+    entity: user
+    via: buyer_user_id
+  - type: belongs_to
+    entity: lead
+    via: lead_id
+  - type: belongs_to
+    entity: site
+    via: owner_site_id
+  - type: belongs_to
+    entity: sales_order
+    via: order_id
+- entity: content
+  managed_by_tool: content
+  docs: https://docs.makinari.com/mcp-server/tools/content
+  description: Manage content. Use action="create" to create new content (requires title, type). Use action="update"
+    to update existing content (requires content_id). Use action="list" to get content items with filters.
+  field_count: 17
+  relationships:
+  - type: belongs_to
+    entity: segment
+    via: segment_id
+  - type: belongs_to
+    entity: campaign
+    via: campaign_id
+  - type: belongs_to
+    entity: site
+    via: site_id
+  - type: belongs_to
+    entity: user
+    via: user_id
+- entity: conversation
+  managed_by_tool: conversations
+  docs: https://docs.makinari.com/mcp-server/tools/conversations
+  description: 'List company conversations. Use action="list" with optional filters: lead_id, visitor_id,
+    user_id, agent_id, status (conversation status e.g. active), channel (e.g. whatsapp, email, chat),
+    custom_data_status (value of cu'
+  field_count: 10
+  relationships:
+  - type: belongs_to
+    entity: lead
+    via: lead_id
+  - type: belongs_to
+    entity: visitor
+    via: visitor_id
+  - type: belongs_to
+    entity: user
+    via: user_id
+  - type: belongs_to
+    entity: agent
+    via: agent_id
+- entity: copywriting
+  managed_by_tool: copywriting
+  docs: https://docs.makinari.com/mcp-server/tools/copywriting
+  description: Manage copywriting templates and approved copies. Use action="create" to create new copy
+    (requires title, copy_type, content). Use action="update" to update existing copy (requires copywriting_id).
+    Use action="list" to g
+  field_count: 15
+  relationships:
+  - type: belongs_to
+    entity: site
+    via: site_id
+  - type: belongs_to
+    entity: user
+    via: user_id
+- entity: deal
+  managed_by_tool: deals
+  docs: https://docs.makinari.com/mcp-server/tools/deals
+  description: Manage sales deals and opportunities. Use action="create" to record a new deal. Use action="update"
+    to modify a deal. Use action="list" to search deals. Use action="delete" to remove a deal record.
+  field_count: 17
+  relationships:
+  - type: belongs_to
+    entity: site
+    via: site_id
+  - type: belongs_to
+    entity: company
+    via: company_id
+  - type: belongs_to
+    entity: sales_order
+    via: sales_order_id
+  - type: has_many
+    entity: lead
+    via: lead_ids
+  - type: has_many
+    entity: user
+    via: owner_ids
+- entity: entitlement
+  managed_by_tool: entitlements
+  docs: https://docs.makinari.com/mcp-server/tools/entitlements
+  description: Read and manage digital entitlements. Use action="list" to find entitlements by buyer or
+    status. Use action="get" to read a single entitlement. Use action="update" to change status (e.g.
+    to "revoked" or "used") or update
+  field_count: 10
+  relationships:
+  - type: belongs_to
+    entity: site
+    via: site_id
+  - type: belongs_to
+    entity: user
+    via: buyer_user_id
+  - type: belongs_to
+    entity: site
+    via: owner_site_id
+- entity: instance
+  managed_by_tool: instance
+  docs: https://docs.makinari.com/mcp-server/tools/instance
+  description: 'Manage AI assistant instances (CRU operations: create, read, update). Use "create" to
+    start a new instance for a specific activity. Use "read" to get details of the current instance or
+    list instances for the site. Use "u'
+  field_count: 8
+  relationships:
+  - type: belongs_to
+    entity: site
+    via: site_id
+- entity: instance_log
+  managed_by_tool: instanceLogs
+  docs: https://docs.makinari.com/mcp-server/tools/instanceLogs
+  description: The instance_logs tool enables you to create and list logs associated with an instance.
+    Use this tool whenever you perform significant actions that should be tracked, encounter errors, or
+    need to review the history of ac
+  field_count: 9
+  relationships:
+  - type: belongs_to
+    entity: instance
+    via: instance_id
+  - type: belongs_to
+    entity: user
+    via: user_id
+- entity: instance_plan
+  managed_by_tool: instancePlan
+  docs: https://docs.makinari.com/mcp-server/tools/instancePlan
+  description: 'Manage instance plans. IMPORTANT: Instance plans are strict execution paths for YOU (the
+    agent), composed of tool calls, processes, reviews, discussions, or user inputs to ensure task success.
+    They are NOT general plans '
+  field_count: 20
+  relationships:
+  - type: belongs_to
+    entity: instance
+    via: instance_id
+  - type: belongs_to
+    entity: plan
+    via: plan_id
+  - type: belongs_to
+    entity: plan_step
+    via: step_id
+  - type: belongs_to
+    entity: site
+    via: site_id
+  - type: belongs_to
+    entity: user
+    via: user_id
+  - type: belongs_to
+    entity: agent
+    via: agent_id
+- entity: lead
+  managed_by_tool: leads
+  docs: https://docs.makinari.com/mcp-server/tools/leads
+  description: Manage leads. Use action="create" to create a new lead (requires name, email). Use action="update"
+    to update an existing lead (requires lead_id). Use action="list" to get leads with filters. Use action="qualify"
+    to chang
+  field_count: 29
+  relationships:
+  - type: belongs_to
+    entity: segment
+    via: segment_id
+  - type: belongs_to
+    entity: campaign
+    via: campaign_id
+  - type: belongs_to
+    entity: user
+    via: assignee_id
+  - type: belongs_to
+    entity: site
+    via: site_id
+  - type: belongs_to
+    entity: user
+    via: user_id
+  - type: belongs_to
+    entity: visitor
+    via: visitor_id
+- entity: memory
+  managed_by_tool: memories
+  docs: https://docs.makinari.com/mcp-server/tools/memories
+  description: 'Manage agent memories. Actions: "save" (create new), "list" (search/filter), "update"
+    (modify existing), "delete" (remove).'
+  field_count: 10
+  relationships:
+  - type: belongs_to
+    entity: client
+    via: client_id
+  - type: belongs_to
+    entity: site
+    via: project_id
+  - type: belongs_to
+    entity: task
+    via: task_id
+- entity: message
+  managed_by_tool: messages
+  docs: https://docs.makinari.com/mcp-server/tools/messages
+  description: 'List messages for this site. Rules: Always provide conversation_id when you have it -
+    site-wide queries are slower and return less context. Use role="user" to see only visitor/lead messages;
+    role="assistant" for bot repl'
+  field_count: 8
+  relationships:
+  - type: belongs_to
+    entity: conversation
+    via: conversation_id
+  - type: belongs_to
+    entity: lead
+    via: lead_id
+- entity: purchase
+  managed_by_tool: purchases
+  docs: https://docs.makinari.com/mcp-server/tools/purchases
+  description: Manage vendor bills / purchase orders (accounts payable). Use for money owed or paid to
+    suppliers — NOT buyer checkout. Use action="create" for a draft header (requires title). Use purchase_items
+    to add lines. Use action
+  field_count: 16
+  relationships:
+  - type: belongs_to
+    entity: site
+    via: site_id
+  - type: belongs_to
+    entity: company
+    via: vendor_company_id
+  - type: belongs_to
+    entity: location
+    via: location_id
+- entity: purchase_item
+  managed_by_tool: purchase_items
+  docs: https://docs.makinari.com/mcp-server/tools/purchase_items
+  description: Manage line items on a vendor bill / purchase order. Use after creating a purchases header.
+    Use action="create" to add a line (requires purchase_id and name or catalog_item_id). Totals on the
+    parent purchase are recalcul
+  field_count: 8
+  relationships:
+  - type: belongs_to
+    entity: purchase
+    via: purchase_id
+  - type: belongs_to
+    entity: catalog_item
+    via: catalog_item_id
+- entity: quotation
+  managed_by_tool: quotations
+  docs: https://docs.makinari.com/mcp-server/tools/quotations
+  description: Manage commercial quotations. Use action="create" to start a draft quotation (requires
+    lead_id). Use action="update" to change status (draft, sent, rejected, expired). Use action="list"
+    or "get" to read. Use action="dele
+  field_count: 13
+  relationships:
+  - type: belongs_to
+    entity: site
+    via: site_id
+  - type: belongs_to
+    entity: deal
+    via: deal_id
+  - type: belongs_to
+    entity: lead
+    via: lead_id
+  - type: belongs_to
+    entity: user
+    via: buyer_user_id
+  - type: belongs_to
+    entity: price_list
+    via: price_list_id
+- entity: quotation_item
+  managed_by_tool: quotation_items
+  docs: https://docs.makinari.com/mcp-server/tools/quotation_items
+  description: Manage lines (items) inside a quotation. Use action="create" to add an item. Use action="update"
+    to change quantity/price. Use action="delete" to remove an item. These actions automatically recalculate
+    the quotation tota
+  field_count: 9
+  relationships:
+  - type: belongs_to
+    entity: quotation
+    via: quotation_id
+  - type: belongs_to
+    entity: catalog_item
+    via: catalog_item_id
+- entity: requirement
+  managed_by_tool: requirements
+  docs: https://docs.makinari.com/mcp-server/tools/requirements
+  description: Manage requirements. Use action="create" to create a new requirement (requires title).
+    Use action="update" to update an existing requirement (requires requirement_id). Use action="list"
+    to get requirements with filters.
+  field_count: 27
+  relationships:
+  - type: belongs_to
+    entity: campaign
+    via: campaign_id
+  - type: belongs_to
+    entity: site
+    via: site_id
+  - type: belongs_to
+    entity: user
+    via: user_id
+- entity: requirement_status
+  managed_by_tool: requirementStatus
+  docs: https://docs.makinari.com/mcp-server/tools/requirementStatus
+  description: The requirement_status tool allows you to log progress and update stages on a client requirement,
+    as well as list the stage history for a specific requirement. Use this tool whenever there's an update,
+    failure, or comple
+  field_count: 11
+  relationships:
+  - type: belongs_to
+    entity: requirement
+    via: requirement_id
+  - type: belongs_to
+    entity: instance
+    via: instance_id
+  - type: belongs_to
+    entity: asset
+    via: asset_id
+- entity: reservation
+  managed_by_tool: reservations
+  docs: https://docs.makinari.com/mcp-server/tools/reservations
+  description: Manage capacity reservations and find available slots for reservable items. Note that normal
+    checkout flows typically create pending reservations automatically when a user buys a slot. This tool
+    allows for querying inven
+  field_count: 13
+  relationships:
+  - type: belongs_to
+    entity: site
+    via: site_id
+  - type: belongs_to
+    entity: catalog_item
+    via: catalog_item_id
+  - type: belongs_to
+    entity: lead
+    via: lead_id
+- entity: reservation_schedule
+  managed_by_tool: reservation_schedules
+  docs: https://docs.makinari.com/mcp-server/tools/reservation_schedules
+  description: Manage reservation schedules for catalog items. A catalog item must have is_reservation
+    = true before you can create a schedule for it. Use action="upsert" to configure a schedule (requires
+    catalog_item_id , timezone , a
+  field_count: 10
+  relationships:
+  - type: belongs_to
+    entity: catalog_item
+    via: catalog_item_id
+  - type: belongs_to
+    entity: site
+    via: site_id
+- entity: sale
+  managed_by_tool: sales
+  docs: https://docs.makinari.com/mcp-server/tools/sales
+  description: Manage sales transactions. Use action="create" to record a new sale. Use action="update"
+    to modify a sale record. Use action="list" to search sales history. Use action="delete" to remove
+    a sale record.
+  field_count: 14
+  relationships:
+  - type: belongs_to
+    entity: lead
+    via: customer_id
+  - type: has_many
+    entity: catalog_item
+    via: product_ids
+  - type: belongs_to
+    entity: site
+    via: site_id
+- entity: sales_order
+  managed_by_tool: salesOrder
+  docs: https://docs.makinari.com/mcp-server/tools/salesOrder
+  description: Manage sales orders. Use action="create" to create a sales record and optionally an order.
+    Use action="update" to update an order. Use action="list" to search orders. Use action="delete" to
+    remove an order.
+  field_count: 20
+  relationships:
+  - type: belongs_to
+    entity: lead
+    via: customer_id
+  - type: has_many
+    entity: catalog_item
+    via: product_ids
+  - type: belongs_to
+    entity: sale
+    via: sale_id
+  - type: belongs_to
+    entity: site
+    via: site_id
+- entity: segment
+  managed_by_tool: segments
+  docs: https://docs.makinari.com/mcp-server/tools/segments
+  description: Manage audience segments. Use action="create" to create a new segment (requires name).
+    Use action="update" to update an existing segment (requires segment_id). Use action="list" to get
+    segments with filters.
+  field_count: 13
+  relationships:
+  - type: belongs_to
+    entity: site
+    via: site_id
+  - type: belongs_to
+    entity: user
+    via: user_id
+- entity: subscription_plan_item
+  managed_by_tool: subscription_plan_items
+  docs: https://docs.makinari.com/mcp-server/tools/subscription_plan_items
+  description: Manage mappings between a subscription plan and its included digital assets. Use action="create"
+    to map a digital asset to a plan. Use action="list" to read existing mappings. Use action="delete"
+    to remove a mapping.
+  field_count: 7
+  relationships:
+  - type: belongs_to
+    entity: site
+    via: site_id
+  - type: belongs_to
+    entity: catalog_item
+    via: plan_catalog_item_id
+  - type: belongs_to
+    entity: catalog_item
+    via: digital_catalog_item_id
+- entity: task
+  managed_by_tool: tasks
+  docs: https://docs.makinari.com/mcp-server/tools/tasks
+  description: Manage tasks. Use action="create" to create a new task (requires title, type, lead_id).
+    Use action="update" to update an existing task (requires task_id). Use action="list" to get tasks
+    with filters.
+  field_count: 24
+  relationships:
+  - type: belongs_to
+    entity: lead
+    via: lead_id
+  - type: belongs_to
+    entity: conversation
+    via: conversation_id
+  - type: belongs_to
+    entity: user
+    via: user_id
+  - type: belongs_to
+    entity: site
+    via: site_id
+  - type: belongs_to
+    entity: visitor
+    via: visitor_id
+- entity: webhook
+  managed_by_tool: webhooks
+  docs: https://docs.makinari.com/mcp-server/tools/webhooks
+  description: Manage webhooks. Use action="list" to get all webhooks. Use action="create" with url and
+    events (array of strings) to register a new webhook.
+  field_count: 3
+  relationships: []
+- entity: whatsapp_template
+  managed_by_tool: whatsappTemplate
+  docs: https://docs.makinari.com/mcp-server/tools/whatsappTemplate
+  description: WhatsApp templates are required when sending to a user more than 24 hours after their last
+    message. Use action create_template first (phone_number, message); if it returns template_id, then
+    use action send_template (temp
+  field_count: 7
+  relationships:
+  - type: belongs_to
+    entity: conversation
+    via: conversation_id

@@ -1,22 +1,46 @@
-generated: '2026-07-21'
+generated: '2026-08-13'
 method: searched
 source: https://www.makinari.com/product/changelog
-scheme: monthly
-current_version: null
+docs: https://www.makinari.com/product/changelog
+scheme: semver
+current_version: 1.5.0
 notes: >-
-  Makinari publishes a public monthly changelog ("New updates and improvements
-  to Makinari"). Entries are month-dated rather than semver. Recent window
-  captured 2026-07-21.
+  Makinari publishes a public product changelog. Round 1 (2026-07-21) recorded
+  it as month-dated only; each entry now also carries a semantic version and
+  its own permalink page (/product/changelog/v1-5-0 …), with an Overview, Key
+  Changes and Developer Notes section. Recent window captured 2026-08-13 — the
+  five published releases, newest first. No release notes newer than v1.5.0
+  (March 2026) were published as of this pass, so the changelog has not been
+  updated in roughly five months.
+  These are PRODUCT releases, not API versions: the REST API is still v1 in the
+  URI path and no entry announces an API breaking change. Nothing in the
+  changelog announces the commerce expansion visible in the MCP tool catalogue
+  (quotations, purchases, entitlements, reservations, checkout), so the API
+  surface is moving faster than the published release notes.
+staleness:
+  latest_entry_date: '2026-03'
+  checked: '2026-08-13'
+  months_since_latest: 5
 entries:
-  - date: '2026-03'
+  - version: 1.5.0
+    date: '2026-03'
     title: Product Agents & UI Improvements
+    url: https://www.makinari.com/product/changelog/v1-5-0
     breaking: false
+    overview: >-
+      Introduced the new Product Agents page and improved icon handling across
+      the platform.
     highlights:
       - Added new Product Agents page for better AI agent management
       - Fixed icon exports and imports in use cases data for visual consistency
-  - date: '2026-02'
+  - version: 1.4.2
+    date: '2026-02'
     title: Safari Compatibility & Social Media Integration
+    url: https://www.makinari.com/product/changelog/v1-4-2
     breaking: false
+    overview: >-
+      A major focus on cross-browser compatibility, specifically for Safari,
+      alongside new content asset management and social media integrations.
     highlights:
       - Improved Safari compatibility and UI consistency across chat components
       - Added content asset management features (fetch, attach, detach assets)
@@ -24,21 +48,50 @@ entries:
       - Enhanced chat message rendering with remark-gfm support
       - Refactored SimpleMessagesView to enhance step management
       - Implemented lead qualification activity with error handling
-  - date: '2026-01'
+  - version: 1.3.0
+    date: '2026-01'
     title: Social Networks Addon & UX Consolidation
+    url: https://www.makinari.com/product/changelog/v1-3-0
     breaking: false
+    overview: >-
+      Launched the initial version of the Social Networks addon and delivered
+      numerous UI/UX improvements across all apps.
+    additions:
+      - 'New lead statuses: cold and not-qualified'
     highlights:
       - Launched v0 Social Networks addon
       - 'Added support for new lead statuses: cold and not-qualified'
       - Added command review on all chat messages
       - Improved pending conversations filtering and prioritization
       - Fixed lead updating and added better visual feedback
-  - date: '2025-12'
+  - version: 1.2.5
+    date: '2025-12'
     title: Next.js Upgrade & Agent Mail
+    url: https://www.makinari.com/product/changelog/v1-2-5
     breaking: false
+    overview: >-
+      Upgraded the core framework to Next.js 16 and React 19, introduced a new
+      UX for agent mail, and streamlined the signup process.
     highlights:
       - Updated to Next.js 16 and React 19
       - Introduced new Agent Mail UX
       - Removed requirements for signup
       - Added v0 for message confirmation
       - Improved settings and context UX
+      - Added new navigation icons
+  - version: 1.1.0
+    date: '2025-11'
+    title: 2FA, Video Generation & Analytics
+    url: https://www.makinari.com/product/changelog/v1-1-0
+    breaking: false
+    overview: >-
+      A feature-packed month introducing video generation, manual enrichment in
+      Find People, and Two-Factor Authentication.
+    highlights:
+      - Added video generation to makinas (the AI agents)
+      - Added support for Two-Factor Authentication (2FA)
+      - Introduced manual enrichment feature in Find People
+      - New metrics for meetings KPIs
+      - Added new activities on settings for inbound notifications
+      - Improved filters for chats screen
+      - Implemented CORS and CSP for security enhancements

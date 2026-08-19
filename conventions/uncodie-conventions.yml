@@ -1,6 +1,16 @@
-generated: '2026-07-21'
+generated: '2026-08-13'
 method: searched
 source: https://docs.makinari.com/rest-api
+notes: >-
+  Re-confirmed 2026-08-13 against the REST reference, the 56 MCP tool pages
+  and the live platform. Two findings worth flagging for an integrator:
+  (1) there is still no idempotency mechanism anywhere, and that now includes
+  a money flow — checkout, sales orders, purchases and quotations are all
+  create-on-POST with no key, so a retry duplicates a commercial record;
+  (2) the error envelope is not consistent. The documented shape is
+  {"message": "..."} but the live platform returns
+  {"success": false, "error": {"code": "...", "message": "..."}} on a 401,
+  so a client must handle both.
 authentication:
   style: api-key-bearer
   header: 'Authorization: Bearer YOUR_API_KEY'
@@ -39,6 +49,20 @@ rate_limits:
   status: 429
   headers: []
   notes: 429 "Rate limit exceeded" is documented; no rate-limit response headers are documented.
+  artifact: rate-limits/uncodie-rate-limits.yml
+quotas:
+  model: credits
+  notes: >-
+    Consumption is governed commercially rather than by rate limit — 20 / 100
+    / 500 credits per month by tier with metered per-call overage.
+  artifact: plans/uncodie-plans-pricing.yml
+mcp:
+  supported: true
+  artifact: mcp/uncodie-mcp.yml
+  crosswalk: mcp/uncodie-tool-crosswalk.yml
+  notes: >-
+    The MCP tool surface is not a mirror of REST: the whole commerce cluster
+    is MCP-only, and 119 documented REST operations have no tool.
 webhooks:
   supported: true
   artifact: asyncapi/uncodie-webhooks.yml

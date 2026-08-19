@@ -1,0 +1,747 @@
+generated: '2026-08-13'
+method: derived
+source: >-
+  https://docs.makinari.com/mcp-server/tools (56 tool pages) and
+  https://docs.makinari.com/rest-api, /agents, /workflows, /content-api
+  (125 reference pages harvested 2026-08-13)
+notes: >-
+  Makinari publishes no OpenAPI document, so there are no operationIds to bind
+  to. This crosswalk binds each documented MCP tool to the REST path(s) the
+  provider prints on that tool's OWN documentation page — 35 of 56 tools
+  publish their REST equivalent explicitly, which is why those bindings are
+  high confidence rather than name-matched guesses. `rest:` therefore carries
+  "METHOD-less" documented paths as published (the tool pages state the path,
+  not always the verb; every tools route the docs show a verb for is POST).
+  Nothing is inferred: a tool with no published REST path is listed under
+  mcp_only[] rather than mapped by name similarity.
+  THE HEADLINE DIVERGENCE: the entire commerce cluster is MCP-ONLY. quotations,
+  quotation_items, purchases, purchase_items, checkout, catalog_commerce,
+  entitlements, subscription_plan_items, reservations and reservation_schedules
+  are documented as MCP tools with full input schemas but have no REST route
+  published anywhere. An integrator who cannot speak MCP cannot reach
+  Makinari's commerce surface at all. In the other direction, 119 documented
+  REST operations — the whole Agents API (per-agent chat, CMO, copywriter,
+  customer support, data analyst, email, growth, sales, UX, WhatsApp), the
+  Robots browser-automation surface, Visitors, Finder, Instances, API keys,
+  Secure Tokens and the public Content API — have no MCP tool.
+  These are overlapping-but-non-identical projections of one core, exactly as
+  the pipeline expects; neither is a superset.
+surfaces:
+  openapi: null
+  openapi_note: >-
+    No OpenAPI/Swagger document is published; contract discovery re-run
+    2026-08-13 against every host missed on every candidate path.
+  graphql: null
+  mcp:
+    url: https://backend.makinari.com/api/mcp
+    gated: true
+    gate: 'HTTP 401 UNAUTHORIZED — API key required; anonymous tools/list refused'
+    docs: https://docs.makinari.com/mcp-server/tools
+  rest:
+    base: https://backend.makinari.com/api
+    documented_base: https://api.makinari.io/v1
+    documented_base_note: 'api.makinari.io does not resolve in DNS (checked 2026-08-13)'
+    gated: true
+    gate: 'every /api/* path returns 401 without an API key, including unknown paths'
+    docs: https://docs.makinari.com/rest-api
+coverage:
+  mcp_tools: 56
+  mcp_tools_with_documented_rest: 35
+  mcp_only_tools: 21
+  documented_rest_operations: 139
+  rest_operations_without_a_tool: 119
+  openapi_operations: 0
+crosswalk:
+- tool: analyzeICPTotalCount
+  category: prospecting
+  mcp_docs: https://docs.makinari.com/mcp-server/tools/analyzeICPTotalCount
+  input_params: 12
+  rest:
+  - /api/agents/tools/analyzeICPTotalCount
+  binding: documented-equivalent
+  confidence: high
+  note: REST equivalent published on the tool's own documentation page.
+- tool: assets
+  category: content
+  mcp_docs: https://docs.makinari.com/mcp-server/tools/assets
+  input_params: 8
+  rest:
+  - /api/agents/tools/assets/create
+  - /api/agents/tools/assets/get
+  - /api/agents/tools/assets/update
+  binding: documented-equivalent
+  confidence: high
+  note: REST equivalent published on the tool's own documentation page.
+- tool: campaigns
+  category: marketing
+  mcp_docs: https://docs.makinari.com/mcp-server/tools/campaigns
+  input_params: 14
+  rest:
+  - /api/agents/tools/campaigns/create
+  - /api/agents/tools/campaigns/get
+  - /api/agents/tools/campaigns/update
+  binding: documented-equivalent
+  confidence: high
+  note: REST equivalent published on the tool's own documentation page.
+- tool: configureEmail
+  category: configuration
+  mcp_docs: https://docs.makinari.com/mcp-server/tools/configureEmail
+  input_params: 8
+  rest:
+  - /api/agents/tools/configureEmail
+  binding: documented-equivalent
+  confidence: high
+  note: REST equivalent published on the tool's own documentation page.
+- tool: configureWhatsApp
+  category: configuration
+  mcp_docs: https://docs.makinari.com/mcp-server/tools/configureWhatsApp
+  input_params: 4
+  rest:
+  - /api/agents/tools/configureWhatsApp
+  binding: documented-equivalent
+  confidence: high
+  note: REST equivalent published on the tool's own documentation page.
+- tool: content
+  category: content
+  mcp_docs: https://docs.makinari.com/mcp-server/tools/content
+  input_params: 17
+  rest:
+  - /api/agents/tools/content/create
+  - /api/agents/tools/content/get
+  - /api/agents/tools/content/update
+  binding: documented-equivalent
+  confidence: high
+  note: REST equivalent published on the tool's own documentation page.
+- tool: conversations
+  category: messaging
+  mcp_docs: https://docs.makinari.com/mcp-server/tools/conversations
+  input_params: 10
+  rest:
+  - /api/agents/customerSupport/conversations
+  binding: documented-equivalent
+  confidence: high
+  note: REST equivalent published on the tool's own documentation page.
+- tool: copywriting
+  category: content
+  mcp_docs: https://docs.makinari.com/mcp-server/tools/copywriting
+  input_params: 15
+  rest:
+  - /api/agents/tools/copywriting/create
+  - /api/agents/tools/copywriting/delete
+  - /api/agents/tools/copywriting/get
+  - /api/agents/tools/copywriting/update
+  binding: documented-equivalent
+  confidence: high
+  note: REST equivalent published on the tool's own documentation page.
+- tool: createIcpMining
+  category: prospecting
+  mcp_docs: https://docs.makinari.com/mcp-server/tools/createIcpMining
+  input_params: 13
+  rest:
+  - /api/agents/tools/createIcpMining
+  binding: documented-equivalent
+  confidence: high
+  note: REST equivalent published on the tool's own documentation page.
+- tool: createSecret
+  category: security
+  mcp_docs: https://docs.makinari.com/mcp-server/tools/createSecret
+  input_params: 0
+  rest:
+  - /api/agents/tools/createSecret
+  binding: documented-equivalent
+  confidence: high
+  note: REST equivalent published on the tool's own documentation page.
+- tool: deals
+  category: crm
+  mcp_docs: https://docs.makinari.com/mcp-server/tools/deals
+  input_params: 17
+  rest:
+  - /api/agents/tools/deals/create
+  - /api/agents/tools/deals/delete
+  - /api/agents/tools/deals/get
+  - /api/agents/tools/deals/update
+  binding: documented-equivalent
+  confidence: high
+  note: REST equivalent published on the tool's own documentation page.
+- tool: generateImage
+  category: media
+  mcp_docs: https://docs.makinari.com/mcp-server/tools/generateImage
+  input_params: 7
+  rest:
+  - /api/agents/tools/generateImage
+  binding: documented-equivalent
+  confidence: high
+  note: REST equivalent published on the tool's own documentation page.
+- tool: generateVideo
+  category: media
+  mcp_docs: https://docs.makinari.com/mcp-server/tools/generateVideo
+  input_params: 7
+  rest:
+  - /api/ai/video
+  binding: documented-equivalent
+  confidence: high
+  note: REST equivalent published on the tool's own documentation page.
+- tool: getFinderCategoryIds
+  category: prospecting
+  mcp_docs: https://docs.makinari.com/mcp-server/tools/getFinderCategoryIds
+  input_params: 3
+  rest:
+  - /api/agents/tools/getFinderCategoryIds
+  binding: documented-equivalent
+  confidence: high
+  note: REST equivalent published on the tool's own documentation page.
+- tool: instance
+  category: agents
+  mcp_docs: https://docs.makinari.com/mcp-server/tools/instance
+  input_params: 8
+  rest:
+  - /api/agents/tools/instance
+  binding: documented-equivalent
+  confidence: high
+  note: REST equivalent published on the tool's own documentation page.
+- tool: instancePlan
+  category: agents
+  mcp_docs: https://docs.makinari.com/mcp-server/tools/instancePlan
+  input_params: 20
+  rest:
+  - /api/agents/tools/instance_plan/create
+  - /api/agents/tools/instance_plan/get
+  - /api/agents/tools/instance_plan/update
+  binding: documented-equivalent
+  confidence: high
+  note: REST equivalent published on the tool's own documentation page.
+- tool: leads
+  category: crm
+  mcp_docs: https://docs.makinari.com/mcp-server/tools/leads
+  input_params: 29
+  rest:
+  - /api/agents/tools/leads/create
+  - /api/agents/tools/leads/get
+  - /api/agents/tools/leads/identify
+  - /api/agents/tools/leads/qualify
+  - /api/agents/tools/leads/update
+  binding: documented-equivalent
+  confidence: high
+  note: REST equivalent published on the tool's own documentation page.
+- tool: memories
+  category: agent-state
+  mcp_docs: https://docs.makinari.com/mcp-server/tools/memories
+  input_params: 10
+  rest:
+  - /api/agents/tools/memories/delete
+  - /api/agents/tools/memories/get
+  - /api/agents/tools/memories/save
+  - /api/agents/tools/memories/update
+  binding: documented-equivalent
+  confidence: high
+  note: REST equivalent published on the tool's own documentation page.
+- tool: messages
+  category: messaging
+  mcp_docs: https://docs.makinari.com/mcp-server/tools/messages
+  input_params: 8
+  rest:
+  - /api/agents/customerSupport/conversations/messages
+  binding: documented-equivalent
+  confidence: high
+  note: REST equivalent published on the tool's own documentation page.
+- tool: report
+  category: analytics
+  mcp_docs: https://docs.makinari.com/mcp-server/tools/report
+  input_params: 8
+  rest:
+  - /api/agents/tools/report/query
+  binding: documented-equivalent
+  confidence: high
+  note: REST equivalent published on the tool's own documentation page.
+- tool: requirements
+  category: agents
+  mcp_docs: https://docs.makinari.com/mcp-server/tools/requirements
+  input_params: 27
+  rest:
+  - /api/agents/tools/requirements/create
+  - /api/agents/tools/requirements/get
+  - /api/agents/tools/requirements/update
+  binding: documented-equivalent
+  confidence: high
+  note: REST equivalent published on the tool's own documentation page.
+- tool: sales
+  category: commerce
+  mcp_docs: https://docs.makinari.com/mcp-server/tools/sales
+  input_params: 14
+  rest:
+  - /api/agents/tools/sales/create
+  - /api/agents/tools/sales/delete
+  - /api/agents/tools/sales/get
+  - /api/agents/tools/sales/update
+  binding: documented-equivalent
+  confidence: high
+  note: REST equivalent published on the tool's own documentation page.
+- tool: salesOrder
+  category: commerce
+  mcp_docs: https://docs.makinari.com/mcp-server/tools/salesOrder
+  input_params: 20
+  rest:
+  - /api/agents/tools/sales-order/create
+  - /api/agents/tools/sales-order/delete
+  - /api/agents/tools/sales-order/get
+  - /api/agents/tools/sales-order/update
+  binding: documented-equivalent
+  confidence: high
+  note: REST equivalent published on the tool's own documentation page.
+- tool: scheduling
+  category: scheduling
+  mcp_docs: https://docs.makinari.com/mcp-server/tools/scheduling
+  input_params: 15
+  rest:
+  - /api/agents/tools/scheduling/availability
+  - /api/agents/tools/scheduling/schedule
+  binding: documented-equivalent
+  confidence: high
+  note: REST equivalent published on the tool's own documentation page.
+- tool: segments
+  category: crm
+  mcp_docs: https://docs.makinari.com/mcp-server/tools/segments
+  input_params: 13
+  rest:
+  - /api/agents/tools/segments/create
+  - /api/agents/tools/segments/get
+  - /api/agents/tools/segments/update
+  binding: documented-equivalent
+  confidence: high
+  note: REST equivalent published on the tool's own documentation page.
+- tool: sendEmail
+  category: messaging
+  mcp_docs: https://docs.makinari.com/mcp-server/tools/sendEmail
+  input_params: 8
+  rest:
+  - /api/agents/tools/sendEmail
+  binding: documented-equivalent
+  confidence: high
+  note: REST equivalent published on the tool's own documentation page.
+- tool: sendWhatsApp
+  category: messaging
+  mcp_docs: https://docs.makinari.com/mcp-server/tools/sendWhatsApp
+  input_params: 8
+  rest:
+  - /api/agents/tools/sendWhatsApp
+  binding: documented-equivalent
+  confidence: high
+  note: REST equivalent published on the tool's own documentation page.
+- tool: tasks
+  category: crm
+  mcp_docs: https://docs.makinari.com/mcp-server/tools/tasks
+  input_params: 24
+  rest:
+  - /api/agents/tools/tasks/create
+  - /api/agents/tools/tasks/get
+  - /api/agents/tools/tasks/update
+  binding: documented-equivalent
+  confidence: high
+  note: REST equivalent published on the tool's own documentation page.
+- tool: updateSiteSettings
+  category: configuration
+  mcp_docs: https://docs.makinari.com/mcp-server/tools/updateSiteSettings
+  input_params: 25
+  rest:
+  - /api/agents/tools/updateSiteSettings
+  binding: documented-equivalent
+  confidence: high
+  note: REST equivalent published on the tool's own documentation page.
+- tool: urlToMarkdown
+  category: research
+  mcp_docs: https://docs.makinari.com/mcp-server/tools/urlToMarkdown
+  input_params: 1
+  rest:
+  - /api/agents/tools/urlToMarkdown
+  binding: documented-equivalent
+  confidence: high
+  note: REST equivalent published on the tool's own documentation page.
+- tool: urlToSitemap
+  category: research
+  mcp_docs: https://docs.makinari.com/mcp-server/tools/urlToSitemap
+  input_params: 1
+  rest:
+  - /api/agents/tools/urlToSitemap
+  binding: documented-equivalent
+  confidence: high
+  note: REST equivalent published on the tool's own documentation page.
+- tool: webSearch
+  category: research
+  mcp_docs: https://docs.makinari.com/mcp-server/tools/webSearch
+  input_params: 7
+  rest:
+  - /api/agents/tools/webSearch
+  binding: documented-equivalent
+  confidence: high
+  note: REST equivalent published on the tool's own documentation page.
+- tool: webhooks
+  category: automation
+  mcp_docs: https://docs.makinari.com/mcp-server/tools/webhooks
+  input_params: 3
+  rest:
+  - /api/agents/tools/webhooks
+  binding: documented-equivalent
+  confidence: high
+  note: REST equivalent published on the tool's own documentation page.
+- tool: whatsappTemplate
+  category: messaging
+  mcp_docs: https://docs.makinari.com/mcp-server/tools/whatsappTemplate
+  input_params: 7
+  rest:
+  - /api/agents/tools/whatsapp-templates
+  binding: documented-equivalent
+  confidence: high
+  note: REST equivalent published on the tool's own documentation page.
+- tool: workflows
+  category: automation
+  mcp_docs: https://docs.makinari.com/mcp-server/tools/workflows
+  input_params: 2
+  rest:
+  - /api/workflow/agentMessage
+  - /api/workflow/analyzeSite
+  - /api/workflow/assignLeads
+  - /api/workflow/buildCampaigns
+  - /api/workflow/buildContent
+  - /api/workflow/buildSegments
+  - /api/workflow/buildSegmentsICP
+  - /api/workflow/customerSupportMessage
+  - /api/workflow/dailyStandUp
+  - /api/workflow/enrichLead
+  - /api/workflow/idealClientProfileMining
+  - /api/workflow/leadFollowUp
+  - /api/workflow/leadGeneration
+  - /api/workflow/leadInvalidation
+  - /api/workflow/leadQualification
+  - /api/workflow/leadResearch
+  - /api/workflow/promptRobot
+  - /api/workflow/sendEmailFromAgent
+  - /api/workflow/sendWhatsappFromAgent
+  - /api/workflow/startRobot
+  - /api/workflow/stopRobot
+  binding: documented-equivalent
+  confidence: high
+  note: REST equivalent published on the tool's own documentation page.
+mcp_only:
+- tool: audience
+  category: crm
+  input_params: 12
+  reason: No REST equivalent published on the tool page or anywhere in the REST/Agents/Workflows reference.
+- tool: audioToText
+  category: media
+  input_params: 1
+  reason: No REST equivalent published on the tool page or anywhere in the REST/Agents/Workflows reference.
+- tool: catalog_commerce
+  category: commerce
+  input_params: 31
+  reason: No REST equivalent published on the tool page or anywhere in the REST/Agents/Workflows reference.
+- tool: checkout
+  category: commerce
+  input_params: 10
+  reason: No REST equivalent published on the tool page or anywhere in the REST/Agents/Workflows reference.
+- tool: createProject
+  category: configuration
+  input_params: 1
+  reason: No REST equivalent published on the tool page or anywhere in the REST/Agents/Workflows reference.
+- tool: entitlements
+  category: commerce
+  input_params: 10
+  reason: No REST equivalent published on the tool page or anywhere in the REST/Agents/Workflows reference.
+- tool: extractFrames
+  category: media
+  input_params: 2
+  reason: No REST equivalent published on the tool page or anywhere in the REST/Agents/Workflows reference.
+- tool: generateAudio
+  category: media
+  input_params: 5
+  reason: No REST equivalent published on the tool page or anywhere in the REST/Agents/Workflows reference.
+- tool: instanceLogs
+  category: agents
+  input_params: 9
+  reason: No REST equivalent published on the tool page or anywhere in the REST/Agents/Workflows reference.
+- tool: publish
+  category: content
+  input_params: 0
+  reason: No REST equivalent published on the tool page or anywhere in the REST/Agents/Workflows reference.
+- tool: purchase_items
+  category: commerce
+  input_params: 8
+  reason: No REST equivalent published on the tool page or anywhere in the REST/Agents/Workflows reference.
+- tool: purchases
+  category: commerce
+  input_params: 16
+  reason: No REST equivalent published on the tool page or anywhere in the REST/Agents/Workflows reference.
+- tool: quotation_items
+  category: commerce
+  input_params: 9
+  reason: No REST equivalent published on the tool page or anywhere in the REST/Agents/Workflows reference.
+- tool: quotations
+  category: commerce
+  input_params: 13
+  reason: No REST equivalent published on the tool page or anywhere in the REST/Agents/Workflows reference.
+- tool: requirementStatus
+  category: agents
+  input_params: 11
+  reason: No REST equivalent published on the tool page or anywhere in the REST/Agents/Workflows reference.
+- tool: reservation_schedules
+  category: commerce
+  input_params: 10
+  reason: No REST equivalent published on the tool page or anywhere in the REST/Agents/Workflows reference.
+- tool: reservations
+  category: commerce
+  input_params: 13
+  reason: No REST equivalent published on the tool page or anywhere in the REST/Agents/Workflows reference.
+- tool: searchRegionVenues
+  category: prospecting
+  input_params: 6
+  reason: No REST equivalent published on the tool page or anywhere in the REST/Agents/Workflows reference.
+- tool: sendBulkMessages
+  category: messaging
+  input_params: 8
+  reason: No REST equivalent published on the tool page or anywhere in the REST/Agents/Workflows reference.
+- tool: subscription_plan_items
+  category: commerce
+  input_params: 7
+  reason: No REST equivalent published on the tool page or anywhere in the REST/Agents/Workflows reference.
+- tool: systemNotification
+  category: agents
+  input_params: 7
+  reason: No REST equivalent published on the tool page or anywhere in the REST/Agents/Workflows reference.
+rest_only:
+- operation: POST /api/agents/chat/intervention
+  docs: https://docs.makinari.com/agents/chat/intervention
+- operation: POST /api/agents/chat/message
+  docs: https://docs.makinari.com/agents/chat/message
+- operation: GET /api/agents/chat/websocket
+  docs: https://docs.makinari.com/agents/chat/websocket
+- operation: POST /api/agents/cmo/assignLeads
+  docs: https://docs.makinari.com/agents/cmo/assign-leads
+- operation: POST /api/agents/cmo/dailyStandUp/growth
+  docs: https://docs.makinari.com/agents/cmo/daily-standup-growth
+- operation: POST /api/agents/cmo/dailyStandUp/sales
+  docs: https://docs.makinari.com/agents/cmo/daily-standup-sales
+- operation: POST /api/agents/cmo/dailyStandUp/system
+  docs: https://docs.makinari.com/agents/cmo/daily-standup-system
+- operation: POST /api/agents/cmo/message
+  docs: https://docs.makinari.com/agents/cmo/message
+- operation: POST /api/agents/cmo/stakeholder-coordination
+  docs: https://docs.makinari.com/agents/cmo/stakeholder-coordination
+- operation: POST /api/agents/copywriter/content-calendar
+  docs: https://docs.makinari.com/agents/copywriter/content-calendar
+- operation: POST /api/agents/copywriter/content-editor
+  docs: https://docs.makinari.com/agents/copywriter/content-editor
+- operation: GET /api/agents/copywriter/content-improve
+  docs: https://docs.makinari.com/agents/copywriter/content-improve
+- operation: POST /api/agents/copywriter/content-improve
+  docs: https://docs.makinari.com/agents/copywriter/content-improve
+- operation: POST /api/agents/customerSupport/message
+  docs: https://docs.makinari.com/agents/customer-support/message
+- operation: GET /api/agents/customerSupport/status
+  docs: https://docs.makinari.com/agents/customer-support/status
+- operation: POST /api/agents/dataAnalyst/analysis
+  docs: https://docs.makinari.com/agents/data-analyst/analysis
+- operation: POST /api/agents/dataAnalyst/companyContactGeneration
+  docs: https://docs.makinari.com/agents/data-analyst/company-contact-generation
+- operation: POST /api/agents/dataAnalyst/deepResearch
+  docs: https://docs.makinari.com/agents/data-analyst/deep-research
+- operation: POST /api/agents/dataAnalyst/leadContactGeneration
+  docs: https://docs.makinari.com/agents/data-analyst/lead-contact-generation
+- operation: POST /api/agents/dataAnalyst/leadSegmentation
+  docs: https://docs.makinari.com/agents/data-analyst/lead-segmentation
+- operation: POST /api/agents/dataAnalyst/search
+  docs: https://docs.makinari.com/agents/data-analyst/search
+- operation: POST /api/agents/email/aliasReply
+  docs: https://docs.makinari.com/agents/email/alias-reply
+- operation: POST /api/agents/email
+  docs: https://docs.makinari.com/agents/email/analyze
+- operation: POST /api/agents/email/check
+  docs: https://docs.makinari.com/agents/email/check
+- operation: POST /api/agents/email/deliveryStatus
+  docs: https://docs.makinari.com/agents/email/delivery-status
+- operation: POST /api/agents/email/leadsReply
+  docs: https://docs.makinari.com/agents/email/leads-reply
+- operation: POST /api/agents/email/reply
+  docs: https://docs.makinari.com/agents/email/reply
+- operation: POST /api/agents/email/sync
+  docs: https://docs.makinari.com/agents/email/sync
+- operation: POST /api/agents/growth/campaigns
+  docs: https://docs.makinari.com/agents/growth/campaigns
+- operation: POST /api/agents/growth/campaigns/requirements
+  docs: https://docs.makinari.com/agents/growth/campaigns/requirements
+- operation: POST /api/agents/growth/robot/plan
+  docs: https://docs.makinari.com/agents/growth/robot/plan
+- operation: POST /api/agents/growth/segments
+  docs: https://docs.makinari.com/agents/growth/segments
+- operation: POST /api/agents/growth/segments/icp
+  docs: https://docs.makinari.com/agents/growth/segments/icp
+- operation: POST /api/agents/sales/leadFollowUp
+  docs: https://docs.makinari.com/agents/sales/lead-follow-up
+- operation: POST /api/agents/sales/leadGeneration
+  docs: https://docs.makinari.com/agents/sales/lead-generation
+- operation: POST /api/agents/sales/leadResearch
+  docs: https://docs.makinari.com/agents/sales/lead-research
+- operation: POST /api/agents/sales/leadSelection
+  docs: https://docs.makinari.com/agents/sales/lead-selection
+- operation: POST /api/agents/sales/message
+  docs: https://docs.makinari.com/agents/sales/message
+- operation: POST /api/agents/sales/regionSearch
+  docs: https://docs.makinari.com/agents/sales/region-search
+- operation: GET /api/agents/sales/regionVenues
+  docs: https://docs.makinari.com/agents/sales/region-venues
+- operation: POST /api/agents/sales/regionVenues
+  docs: https://docs.makinari.com/agents/sales/region-venues
+- operation: POST /api/agents/ux/analyze
+  docs: https://docs.makinari.com/agents/ux/analyze
+- operation: POST /api/agents/whatsapp/analyze
+  docs: https://docs.makinari.com/agents/whatsapp/analyze
+- operation: POST /api/agents/whatsapp/createTemplate
+  docs: https://docs.makinari.com/agents/whatsapp/create-template
+- operation: POST /api/agents/whatsapp/sendTemplate
+  docs: https://docs.makinari.com/agents/whatsapp/send-template
+- operation: POST /api/agents/whatsapp/webhook
+  docs: https://docs.makinari.com/agents/whatsapp/webhook
+- operation: GET /api/public/ads
+  docs: https://docs.makinari.com/content-api/ads
+- operation: GET /api/public/posts
+  docs: https://docs.makinari.com/content-api/blog-posts
+- operation: GET /api/public/case-studies
+  docs: https://docs.makinari.com/content-api/case-studies
+- operation: GET /api/public/content
+  docs: https://docs.makinari.com/content-api/content
+- operation: GET /api/public/ebooks
+  docs: https://docs.makinari.com/content-api/ebooks
+- operation: GET /api/public/infographics
+  docs: https://docs.makinari.com/content-api/infographics
+- operation: GET /api/public/landing-pages
+  docs: https://docs.makinari.com/content-api/landing-pages
+- operation: GET /api/public/newsletters
+  docs: https://docs.makinari.com/content-api/newsletters
+- operation: GET /api/public/podcasts
+  docs: https://docs.makinari.com/content-api/podcasts
+- operation: GET /api/public/rss
+  docs: https://docs.makinari.com/content-api/rss
+- operation: GET /api/public/social-posts
+  docs: https://docs.makinari.com/content-api/social-posts
+- operation: GET /api/public/videos
+  docs: https://docs.makinari.com/content-api/videos
+- operation: GET /api/public/webinars
+  docs: https://docs.makinari.com/content-api/webinars
+- operation: GET /api/public/whitepapers
+  docs: https://docs.makinari.com/content-api/whitepapers
+- operation: DELETE /api/keys
+  docs: https://docs.makinari.com/first-steps/api-keys
+- operation: GET /api/keys
+  docs: https://docs.makinari.com/first-steps/api-keys
+- operation: POST /api/keys
+  docs: https://docs.makinari.com/first-steps/api-keys
+- operation: POST /api/site/setup
+  docs: https://docs.makinari.com/first-steps/project-config
+- operation: POST /api/visitors/sites
+  docs: https://docs.makinari.com/first-steps/project-config
+- operation: POST /api/teamMembers/invite
+  docs: https://docs.makinari.com/first-steps/team
+- operation: GET /api/finder/autocomplete/[category]
+  docs: https://docs.makinari.com/rest-api/finder/autocomplete
+- operation: POST /api/finder/person_contacts_lookup/details
+  docs: https://docs.makinari.com/rest-api/finder/contact-lookup
+- operation: POST /api/finder/person_contacts_lookup/personal_emails
+  docs: https://docs.makinari.com/rest-api/finder/contact-lookup
+- operation: POST /api/finder/person_contacts_lookup/phone_numbers
+  docs: https://docs.makinari.com/rest-api/finder/contact-lookup
+- operation: POST /api/finder/person_contacts_lookup/work_emails
+  docs: https://docs.makinari.com/rest-api/finder/contact-lookup
+- operation: GET /api/finder/icp
+  docs: https://docs.makinari.com/rest-api/finder/icp
+- operation: POST /api/finder/person_role_search
+  docs: https://docs.makinari.com/rest-api/finder/role-search
+- operation: POST /api/finder/person_role_search/createQuery
+  docs: https://docs.makinari.com/rest-api/finder/role-search
+- operation: POST /api/finder/person_role_search/totals
+  docs: https://docs.makinari.com/rest-api/finder/role-search
+- operation: DELETE /api/instances/[id]
+  docs: https://docs.makinari.com/rest-api/instances
+- operation: GET /api/instances
+  docs: https://docs.makinari.com/rest-api/instances
+- operation: GET /api/instances/[id]
+  docs: https://docs.makinari.com/rest-api/instances
+- operation: GET /api/instances/[id]/logs
+  docs: https://docs.makinari.com/rest-api/instances
+- operation: GET /api/instances/[id]/plans
+  docs: https://docs.makinari.com/rest-api/instances
+- operation: POST /api/instances
+  docs: https://docs.makinari.com/rest-api/instances
+- operation: POST /api/instances/[id]/logs
+  docs: https://docs.makinari.com/rest-api/instances
+- operation: POST /api/instances/[id]/plans
+  docs: https://docs.makinari.com/rest-api/instances
+- operation: PUT /api/instances/[id]
+  docs: https://docs.makinari.com/rest-api/instances
+- operation: GET /api/requirements
+  docs: https://docs.makinari.com/rest-api/requirements/get
+- operation: GET /api/requirements/[id]/status
+  docs: https://docs.makinari.com/rest-api/requirements/status
+- operation: POST /api/robots/auth
+  docs: https://docs.makinari.com/rest-api/robots/authentication
+- operation: POST /api/robots/instance/authenticate
+  docs: https://docs.makinari.com/rest-api/robots/authentication
+- operation: POST /api/robots/instance
+  docs: https://docs.makinari.com/rest-api/robots/instances
+- operation: POST /api/robots/instance/act
+  docs: https://docs.makinari.com/rest-api/robots/instances
+- operation: POST /api/robots/instance/assistant
+  docs: https://docs.makinari.com/rest-api/robots/instances
+- operation: POST /api/robots/instance/delete
+  docs: https://docs.makinari.com/rest-api/robots/instances
+- operation: POST /api/robots/instance/pause
+  docs: https://docs.makinari.com/rest-api/robots/instances
+- operation: POST /api/robots/instance/resume
+  docs: https://docs.makinari.com/rest-api/robots/instances
+- operation: POST /api/robots/instance/stop
+  docs: https://docs.makinari.com/rest-api/robots/instances
+- operation: POST /api/robots/plan/act
+  docs: https://docs.makinari.com/rest-api/robots/plans
+- operation: POST /api/robots/plan/initiate
+  docs: https://docs.makinari.com/rest-api/robots/plans
+- operation: POST /api/robots/plan/stop
+  docs: https://docs.makinari.com/rest-api/robots/plans
+- operation: POST /api/robots/plan/verify
+  docs: https://docs.makinari.com/rest-api/robots/plans
+- operation: POST /api/robots/getStreamURL
+  docs: https://docs.makinari.com/rest-api/robots/utilities
+- operation: POST /api/secure-tokens/{id}/decrypt
+  docs: https://docs.makinari.com/rest-api/secure-tokens/decrypt-by-id
+- operation: GET /api/visitors/session
+  docs: https://docs.makinari.com/rest-api/visitors/sessions
+- operation: POST /api/visitors/session
+  docs: https://docs.makinari.com/rest-api/visitors/sessions
+- operation: POST /api/visitors/session/[session_id]/identify
+  docs: https://docs.makinari.com/rest-api/visitors/sessions
+- operation: POST /api/visitors/session/end
+  docs: https://docs.makinari.com/rest-api/visitors/sessions
+- operation: PUT /api/visitors/session
+  docs: https://docs.makinari.com/rest-api/visitors/sessions
+- operation: GET /api/visitors/sites
+  docs: https://docs.makinari.com/rest-api/visitors/sites
+- operation: POST /api/visitors/upload
+  docs: https://docs.makinari.com/rest-api/visitors/sites
+- operation: POST /api/visitors/identify
+  docs: https://docs.makinari.com/rest-api/visitors/tracking
+- operation: POST /api/visitors/segment
+  docs: https://docs.makinari.com/rest-api/visitors/tracking
+- operation: POST /api/visitors/track
+  docs: https://docs.makinari.com/rest-api/visitors/tracking
+- operation: POST /api/workflow/customerSupport
+  docs: https://docs.makinari.com/workflows/customerSupport
+- operation: POST /api/workflow/deepResearch
+  docs: https://docs.makinari.com/workflows/deepResearch
+- operation: POST /api/workflow/humanIntervention
+  docs: https://docs.makinari.com/workflows/humanIntervention
+- operation: POST /api/workflow/keyAccountGeneration
+  docs: https://docs.makinari.com/workflows/keyAccountGeneration
+- operation: POST /api/workflow/leadFollowUpManagement
+  docs: https://docs.makinari.com/workflows/leadFollowUpManagement
+- operation: POST /api/workflow/leadQualificationManagement
+  docs: https://docs.makinari.com/workflows/leadQualificationManagement
+- operation: POST /api/workflow/syncEmails
+  docs: https://docs.makinari.com/workflows/syncEmails
+- operation: POST /api/workflow/webhook
+  docs: https://docs.makinari.com/workflows/webhook

@@ -1,0 +1,106 @@
+generated: '2026-08-13'
+method: searched
+source: >-
+  registry.npmjs.org, pypi.org, makinari.org, github.com/Uncodier,
+  github.com/makinary, https://www.makinari.com/product/api
+package_count: 0
+official_sdk_count: 0
+notes: >-
+  Makinari (formerly Uncodie) publishes NO client SDK to any public package
+  registry. Every candidate name was queried directly against the registry
+  metadata endpoints on 2026-08-13 and returned 404: npm `makinari`,
+  `@makinari/mcp`, `@makinari/sdk`, `uncodie`, `@uncodie/mcp`, `marketfit`;
+  PyPI `makinari`, `uncodie`. npm keyword search for "makinari", "uncodie" and
+  "marketfit" returns no first-party result either.
+  This matters because the company's own developer page
+  (https://www.makinari.com/product/api) shows the code sample
+  `import { MCPServer } from '@makinari/mcp'` — a package that does not exist
+  on npm. The advertised import is not installable.
+  What Makinari does ship is SOURCE, not packages: three first-party
+  application repositories under github.com/Uncodier plus an installer CLI
+  under github.com/makinary, all consumed by `git clone`, none published to a
+  registry and none carrying a version a consumer could pin.
+packages: []
+unpublished_first_party_source:
+  - name: API
+    repository: https://github.com/Uncodier/API
+    registry: none
+    manifest_name: api-server
+    version: 0.1.0
+    published: null
+    official: true
+    language: TypeScript / Next.js
+    description: >-
+      The Makinari API server — REST API, Agents API, the docs site content,
+      and the MCP server (mcp-server/index.ts, `npm run mcp`).
+    note: >-
+      package.json declares "private": true and no license field; no LICENSE
+      file at the repo root. Not on npm; version 0.1.0 is the in-repo manifest
+      version, not a published release.
+  - name: market-fit
+    repository: https://github.com/Uncodier/market-fit
+    registry: none
+    manifest_name: market-fit
+    version: 0.1.0
+    published: null
+    official: true
+    language: TypeScript / Next.js
+    description: Growth Engine frontend (analytics dashboard).
+    note: 'package.json "private": true; no LICENSE file; not on npm.'
+  - name: workflows
+    repository: https://github.com/Uncodier/workflows
+    registry: none
+    manifest_name: temporal-workflows
+    version: 0.2.6
+    published: null
+    official: true
+    language: TypeScript
+    description: Asynchronous Temporal workflows and crons (background jobs).
+    note: 'package.json "private": true; no LICENSE file; not on npm.'
+  - name: cli
+    repository: https://github.com/makinary/cli
+    registry: none
+    version: null
+    published: null
+    official: true
+    language: Shell
+    description: >-
+      One-line installer that clones and wires the three repos for local
+      development or deployment. Captured in cli/uncodie-cli.yml.
+    note: >-
+      Distributed by `git clone` only; the repo publishes no tags or releases,
+      so there is no version a consumer can pin — version recorded as null
+      after checking, not left unchecked.
+license_inconsistency:
+  finding: >-
+    The open-source posture is stated three different ways and none of them is
+    a license file. makinari.org advertises "100% Open Source / AGPL-3.0"; the
+    documentation site footer reads "MIT 2026 © Makinari"; and all three
+    repositories declare "private": true in package.json with no `license`
+    field and no LICENSE file at the root (probed 2026-08-13, all 404).
+  evidence:
+    - url: https://makinari.org
+      status: 200
+      claim: '3 Repositories / 100% Open Source / AGPL-3.0 License'
+    - url: https://docs.makinari.com/rest-api
+      status: 200
+      claim: 'Footer: MIT 2026 © Makinari'
+    - url: https://raw.githubusercontent.com/Uncodier/API/main/LICENSE
+      status: 404
+    - url: https://raw.githubusercontent.com/Uncodier/market-fit/master/LICENSE
+      status: 404
+    - url: https://raw.githubusercontent.com/Uncodier/workflows/main/LICENSE
+      status: 404
+registries_checked:
+  - registry: npm
+    endpoint: https://registry.npmjs.org/<pkg>
+    queried: ['makinari', '@makinari/mcp', '@makinari/sdk', 'uncodie', '@uncodie/mcp', 'marketfit']
+    result: all 404
+  - registry: pypi
+    endpoint: https://pypi.org/pypi/<pkg>/json
+    queried: ['makinari', 'uncodie']
+    result: all 404
+  - registry: npm search
+    endpoint: https://registry.npmjs.org/-/v1/search
+    queried: ['makinari', 'uncodie', 'marketfit']
+    result: no first-party packages
