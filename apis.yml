@@ -43,7 +43,7 @@ x-enrichment:
   status: enriched
   artifacts_added: 8
   pass: local-v1
-specificationVersion: '0.20'
+specificationVersion: '0.23'
 created: '2026-07-17'
 modified: '2026-08-13'
 tags:
