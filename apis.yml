@@ -54,6 +54,20 @@ tags:
 - Sales Automation
 - Marketing Automation
 - Lead Generation
+- No-Code
+- MCP
+- Commerce
+- Workflows
+- Webhook
+- Open-Source
+tags_raw:
+- Company
+- Artificial Intelligence
+- AI Agents
+- CRM
+- Sales Automation
+- Marketing Automation
+- Lead Generation
 - No Code
 - MCP
 - Commerce
@@ -144,6 +158,11 @@ apis:
   humanURL: https://docs.makinari.com/workflows
   baseURL: https://backend.makinari.com/api
   tags:
+  - Workflows
+  - Automation
+  - Temporal
+  - Webhook
+  tags_raw:
   - Workflows
   - Automation
   - Temporal
