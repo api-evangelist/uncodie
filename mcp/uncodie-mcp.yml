@@ -2,38 +2,27 @@ generated: '2026-08-13'
 method: searched
 source: https://docs.makinari.com/mcp-server
 status: published
-notes: >-
-  Uncodie rebranded as Makinari (www.uncodie.com redirects to www.makinari.com).
-  Makinari operates an official HOSTED MCP server AND publishes the server's
-  source, so both deployment modes are real: an agent can POST to
-  https://backend.makinari.com/api/mcp today with an API key, or clone the
-  open-source API repo and run the stdio server locally with `npm run mcp`.
-  Round 2 (2026-08-13) corrected the local repository URL — round 1 recorded
-  github.com/Makinari/API, which 404s; the real, public repository is
-  github.com/Uncodier/API, linked from the company's open-source hub at
-  makinari.org. Round 2 also harvested the full documented tool catalogue: 56
-  tools, each with the provider-published input schema (582 parameters in
-  total), replacing the round-1 name+summary list of 46. Ten of the ten new
-  tools are a commerce expansion (quotations, quotation_items, purchases,
-  purchase_items, catalog_commerce, checkout, entitlements,
-  subscription_plan_items, reservations, reservation_schedules).
-  The live endpoint could not be introspected: an anonymous
-  {"jsonrpc":"2.0","method":"tools/list"} POST returns HTTP 401
-  {"code":"UNAUTHORIZED","message":"API key is required for server-to-server
-  requests"}. The schemas below therefore come from the provider's own
-  documentation pages rather than from tools/list, and are recorded as
-  documented rather than probed.
-  There is no OAuth surface: /.well-known/oauth-authorization-server and
-  /.well-known/oauth-protected-resource both 404 on backend.makinari.com, and
-  the server's own README states MCP uses "the same API keys as the rest of the
-  API" with no MCP-specific credential.
+notes: 'Uncodie rebranded as Makinari (www.uncodie.com redirects to www.makinari.com). Makinari operates
+  an official HOSTED MCP server AND publishes the server''s source, so both deployment modes are real:
+  an agent can POST to https://backend.makinari.com/api/mcp today with an API key, or clone the open-source
+  API repo and run the stdio server locally with `npm run mcp`. Round 2 (2026-08-13) corrected the local
+  repository URL — round 1 recorded github.com/Makinari/API, which 404s; the real, public repository is
+  github.com/Uncodier/API, linked from the company''s open-source hub at makinari.org. Round 2 also harvested
+  the full documented tool catalogue: 56 tools, each with the provider-published input schema (582 parameters
+  in total), replacing the round-1 name+summary list of 46. Ten of the ten new tools are a commerce expansion
+  (quotations, quotation_items, purchases, purchase_items, catalog_commerce, checkout, entitlements, subscription_plan_items,
+  reservations, reservation_schedules). The live endpoint could not be introspected: an anonymous {"jsonrpc":"2.0","method":"tools/list"}
+  POST returns HTTP 401 {"code":"UNAUTHORIZED","message":"API key is required for server-to-server requests"}.
+  The schemas below therefore come from the provider''s own documentation pages rather than from tools/list,
+  and are recorded as documented rather than probed. There is no OAuth surface: /.well-known/oauth-authorization-server
+  and /.well-known/oauth-protected-resource both 404 on backend.makinari.com, and the server''s own README
+  states MCP uses "the same API keys as the rest of the API" with no MCP-specific credential.'
 server:
   name: makinari
   transport: http
   url: https://backend.makinari.com/api/mcp
-  authentication: >-
-    API key sent as "Authorization: Bearer <key>" or "X-API-Key: <key>"; the
-    same keys as the rest of the API (no MCP-specific credential).
+  authentication: 'API key sent as "Authorization: Bearer <key>" or "X-API-Key: <key>"; the same keys
+    as the rest of the API (no MCP-specific credential).'
   protocol: JSON-RPC 2.0 over HTTP POST
   docs: https://docs.makinari.com/mcp-server
   setup:
@@ -54,24 +43,15 @@ server:
     - SERVICE_API_KEY (or a key from the api_keys table) for HTTP auth
     readme: https://github.com/Uncodier/API/blob/main/mcp-server/README.md
 deployment:
-  mode: both
+  mode: remote
   endpoint: https://backend.makinari.com/api/mcp
-  install: npm run mcp
-  package: https://github.com/Uncodier/API
-  auth: api-key
   verified: probed
   probe: gated
-  probe_detail: >-
-    POST tools/list anonymous -> HTTP 401 UNAUTHORIZED (API key required).
-    Endpoint exists and is documented; tool schemas taken from the docs.
-  checked: '2026-08-13'
-  notes: >-
-    The local mode is NOT an installable package — there is no npm/PyPI
-    artifact. It requires cloning github.com/Uncodier/API and running
-    `npm run mcp` from the repo root, with MCP_SITE_ID set.
+  checked: '2026-08-12'
+  source: catalog MCP census
 oauth_discovery:
-  '/.well-known/oauth-authorization-server': 404
-  '/.well-known/oauth-protected-resource': 404
+  /.well-known/oauth-authorization-server: 404
+  /.well-known/oauth-protected-resource: 404
   host: backend.makinari.com
   checked: '2026-08-13'
 tool_count: 56
