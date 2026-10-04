@@ -70,7 +70,7 @@ tags:
 - Commerce
 - Workflows
 - Webhook
-- Open-Source
+- Open Source
 tags_raw:
 - Company
 - Artificial Intelligence
@@ -85,6 +85,7 @@ tags_raw:
 - Workflows
 - Webhooks
 - Open Source
+- Open-Source
 apis:
 - name: Makinari REST API
   description: >-
